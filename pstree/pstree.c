@@ -53,5 +53,6 @@ int main(int argc, char *argv[]) {
   // }
   // assert(!argv[argc]); // always true
   // return 0;
+  OpenProcDir("/proc");
   return 0;
 }
