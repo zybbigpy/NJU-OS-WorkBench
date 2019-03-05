@@ -27,10 +27,10 @@ int FillSysProcInfo(const char *file_addr, int proc_index) {
 
   FILE *file = fopen(file_addr, "r");
   if (file) {
-    if (fscanf(file, "%d%s%c%d%d", &sys_porcs[proc_index].pid,
-               &sys_porcs[proc_index].comm, &sys_porcs[proc_index].state,
+    if (fscanf(file, "%d%s%c%d", &sys_porcs[proc_index].pid,
+               sys_porcs[proc_index].comm, &sys_porcs[proc_index].state,
                &sys_porcs[proc_index].ppid)) {
-      printf("process info is %d, %s, %c, %d, %d \n",sys_porcs[proc_index].pid,
+      printf("process info is %d, %s, %c, %d\n",sys_porcs[proc_index].pid,
                sys_porcs[proc_index].comm, sys_porcs[proc_index].state,
                sys_porcs[proc_index].ppid);
     } else {
