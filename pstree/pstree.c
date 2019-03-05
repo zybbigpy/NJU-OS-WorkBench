@@ -56,7 +56,7 @@ int OpenProcDir(const char *dir_addr) {
         char file_addr[300];
         sprintf(file_addr, "%s%s%s", dir_addr, ptr->d_name, "/stat");
         // printf("the file name is %s \n", file_addr);
-        int ret = FillSysProcInfo(file_addr, proc_index);
+        int ret = FillSysProcInfo(file_addr, &proc_index);
         if (ret) {
           perror("write sys procs array fail. \n");
           return 1;
