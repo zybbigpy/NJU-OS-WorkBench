@@ -2,6 +2,7 @@
 #include <ctype.h>
 #include <dirent.h>
 #include <stdbool.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
@@ -17,7 +18,7 @@ typedef struct ProcInfo {
   char comm[50];
   char state[4];
   pid_t ppid;
-  // pid_t pgrp;
+  pid_t pgrp;
 } ProcInfo;
 
 ProcInfo sys_porcs[MAX_PROC_NUM];
@@ -25,18 +26,15 @@ ProcInfo sys_porcs[MAX_PROC_NUM];
 /* the file addr is always /proc/[pid]/stat. */
 int FillSysProcInfo(const char *file_addr, int proc_index) {
 
-  FILE *file = fopen(file_addr, "r");
-  if (file) {
-    if (fscanf(file, "%d%s%s%d", &sys_porcs[proc_index].pid,
-               sys_porcs[proc_index].comm, sys_porcs[proc_index].state,
-               &sys_porcs[proc_index].ppid)) {
-      printf("process info is %d, %s, %s, %d\n",sys_porcs[proc_index].pid,
-               sys_porcs[proc_index].comm, sys_porcs[proc_index].state,
-               sys_porcs[proc_index].ppid);
-    } else {
-      perror("write proc fail\n");
-      return 1;
-    }
+  FILE *fp = fopen(file_addr, "r");
+  if (fp) {
+    fscanf(fp, "%d%s%s%d", &sys_porcs[proc_index].pid,
+           sys_porcs[proc_index].comm, sys_porcs[proc_index].state,
+           &sys_porcs[proc_index].ppid, &sys_porcs[proc_index].pgrp);
+    // printf("process info is %d, %s, %s, %d\n", sys_porcs[proc_index].pid,
+    //        sys_porcs[proc_index].comm, sys_porcs[proc_index].state,
+    //        sys_porcs[proc_index].ppid);
+    fclose(fp);
   } else {
     perror("open file fail \n");
     return 1;
@@ -62,6 +60,10 @@ int OpenProcDir(const char *dir_addr) {
           return 1;
         } else {
           proc_index++;
+          if(proc_index == MAX_PROC_NUM) {
+            perror("proc array is full!\n");
+            return 1;
+          }
         }
       }
     }
@@ -69,18 +71,42 @@ int OpenProcDir(const char *dir_addr) {
     perror("open dir fail\n");
     return 1;
   }
+  closedir(dir);
   return 0;
+}
+
+void PrintVersion() {
+  printf(" Welcome, this is a simple pstree, version 0.1 \n");
 }
 
 int main(int argc, char *argv[]) {
   // printf("Hello, World!\n");
   // int i;
-  // for (i = 0; i < argc; i++) {
+  // for +(i = 0; i < argc; i++) {
   //   assert(argv[i]); // always true
   //   printf("argv[%d] = %s\n", i, argv[i]);
   // }
   // assert(!argv[argc]); // always true
   // return 0;
+
   OpenProcDir("/proc/");
+
+  int opt;
+  int sorted = 0;
+  while ((opt = getopt(argc, argv, "av"))!=-1 ) {
+    switch (opt)
+    {
+      case 'a':
+        int sorted = 1;
+        break;
+
+      case 'v':
+        PrintVersion();
+        break;
+      default:
+        PrintVersion();
+        break;
+    }
+  }
   return 0;
 }
