@@ -34,7 +34,7 @@ int OpenProcDir(const char *dir_addr) {
       // printf("dir name is:%s \n ", ptr->d_name);
       char file_addr[300];
       sprintf(file_addr, "%s%s%s", dir_addr, ptr->d_name, "/stat");
-      printf("the file name is %s",file_addr);
+      printf("the file name is %s \n",file_addr);
       //int ret = FillSysProcInfo(dir_addr);
     }
   } else {
