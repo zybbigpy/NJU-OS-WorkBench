@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
     {
       case 'a':
         sorted = 1;
-        OpenProcDir("/proc");
+        OpenProcDir("/proc/");
         break;
 
       case 'v':
