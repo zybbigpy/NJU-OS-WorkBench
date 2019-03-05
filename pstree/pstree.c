@@ -26,6 +26,7 @@ ProcInfo sys_porcs[MAX_PROC_NUM];
 /* the file addr is always /proc/[pid]/stat. */
 int FillSysProcInfo(const char *file_addr, int proc_index) {
 
+  printf(" the process index in the array is %d\n", proc_index);
   FILE *fp = fopen(file_addr, "r");
   if (fp) {
     fscanf(fp, "%d%s%s%d%d", &sys_porcs[proc_index].pid,
