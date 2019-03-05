@@ -23,15 +23,15 @@ typedef struct ProcInfo {
 ProcInfo sys_porcs[MAX_PROC_NUM];
 
 bool IsStrDigt(const char *str) {
-  // bool ret = true;
-  // for (int i = 0; i < strlen(str); i++) {
-  //   if (!isdigit(str[i])) {
-  //     ret = false;
-  //     break;
-  //   }
-  // }
-  // return ret;
-  return isdigit(str[0]);
+  bool ret = true;
+  for (int i = 0; i < strlen(str); i++) {
+    if (!isdigit(str[i])) {
+      ret = false;
+      break;
+    }
+  }
+  return ret;
+  // return isdigit(str[0]);
 }
 
 /* the file addr is always /proc/[pid]/stat. */
