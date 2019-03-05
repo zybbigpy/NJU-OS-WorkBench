@@ -28,7 +28,7 @@ int FillSysProcInfo(const char *file_addr, int proc_index) {
 
   FILE *fp = fopen(file_addr, "r");
   if (fp) {
-    fscanf(fp, "%d%s%s%d", &sys_porcs[proc_index].pid,
+    fscanf(fp, "%d%s%s%d%d", &sys_porcs[proc_index].pid,
            sys_porcs[proc_index].comm, sys_porcs[proc_index].state,
            &sys_porcs[proc_index].ppid, &sys_porcs[proc_index].pgrp);
     // printf("process info is %d, %s, %s, %d\n", sys_porcs[proc_index].pid,
@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
   OpenProcDir("/proc/");
 
   int opt;
-  int sorted = 0;
+  int sorted;
   while ((opt = getopt(argc, argv, "av"))!=-1 ) {
     switch (opt)
     {
