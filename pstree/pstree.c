@@ -15,7 +15,7 @@
 typedef struct ProcInfo {
   pid_t pid;
   char comm[20];
-  char state;
+  char state[4];
   pid_t ppid;
   // pid_t pgrp;
 } ProcInfo;
@@ -27,10 +27,10 @@ int FillSysProcInfo(const char *file_addr, int proc_index) {
 
   FILE *file = fopen(file_addr, "r");
   if (file) {
-    if (fscanf(file, "%d%s%c%d", &sys_porcs[proc_index].pid,
-               sys_porcs[proc_index].comm, &sys_porcs[proc_index].state,
+    if (fscanf(file, "%d%s%s%d", &sys_porcs[proc_index].pid,
+               sys_porcs[proc_index].comm, sys_porcs[proc_index].state,
                &sys_porcs[proc_index].ppid)) {
-      printf("process info is %d, %s, %c, %d\n",sys_porcs[proc_index].pid,
+      printf("process info is %d, %s, %s, %d\n",sys_porcs[proc_index].pid,
                sys_porcs[proc_index].comm, sys_porcs[proc_index].state,
                sys_porcs[proc_index].ppid);
     } else {
