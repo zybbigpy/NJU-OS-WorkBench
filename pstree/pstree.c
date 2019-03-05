@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
     switch (opt)
     {
       case 'a':
-        int sorted = 1;
+        sorted = 1;
         break;
 
       case 'v':
