@@ -14,7 +14,7 @@
 */
 typedef struct ProcInfo {
   pid_t pid;
-  char comm[20];
+  char comm[50];
   char state[4];
   pid_t ppid;
   // pid_t pgrp;
