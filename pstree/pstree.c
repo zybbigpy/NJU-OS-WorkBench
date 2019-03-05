@@ -95,7 +95,7 @@ int main(int argc, char *argv[]) {
   // return 0;
 
   //OpenProcDir("/proc/");
-
+  OpenProcDir("/proc/");
   int opt;
   while ((opt = getopt(argc, argv, "av"))!=-1 ) {
     switch (opt)
@@ -109,7 +109,7 @@ int main(int argc, char *argv[]) {
         PrintVersion();
         break;
       default:
-        PrintVersion();
+        OpenProcDir("/p");
         break;
     }
   }
