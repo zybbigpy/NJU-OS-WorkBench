@@ -24,22 +24,23 @@ typedef struct ProcInfo {
 ProcInfo sys_porcs[MAX_PROC_NUM];
 
 /* the file addr is always /proc/[pid]/stat. */
-int FillSysProcInfo(const char *file_addr, int proc_index) {
+int FillSysProcInfo(const char *file_addr, int *proc_index) {
 
-  printf(" the process index in the array is %d\n", proc_index);
+  printf(" the process index in the array is %d\n", *proc_index);
   FILE *fp = fopen(file_addr, "r");
   if (fp) {
-    fscanf(fp, "%d%s%s%d%d", &sys_porcs[proc_index].pid,
-           sys_porcs[proc_index].comm, sys_porcs[proc_index].state,
-           &sys_porcs[proc_index].ppid, &sys_porcs[proc_index].pgrp);
-     printf("process info is %d, %s, %s, %d\n", sys_porcs[proc_index].pid,
-            sys_porcs[proc_index].comm, sys_porcs[proc_index].state,
-            sys_porcs[proc_index].ppid);
+    fscanf(fp, "%d%s%s%d%d", &sys_porcs[*proc_index].pid,
+           sys_porcs[*proc_index].comm, sys_porcs[*proc_index].state,
+           &sys_porcs[*proc_index].ppid, &sys_porcs[*proc_index].pgrp);
+     printf("process info is %d, %s, %s, %d\n", sys_porcs[*proc_index].pid,
+            sys_porcs[*proc_index].comm, sys_porcs[*proc_index].state,
+            sys_porcs[*proc_index].ppid);
     fclose(fp);
   } else {
     perror("open file fail \n");
     return 1;
   }
+  (*proc_index)++;
   return 0;
 }
 
@@ -61,7 +62,7 @@ int OpenProcDir(const char *dir_addr) {
           return 1;
         } else {
           printf("I am here and there is a bug ...\n");
-          proc_index = proc_index + 1;
+          //proc_index = proc_index + 1;
           if(proc_index == MAX_PROC_NUM) {
             perror("proc array is full!\n");
             return 1;
