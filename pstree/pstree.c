@@ -21,6 +21,7 @@ ProcInfo sys_porcs[MAX_PROC_NUM];
 
 int FillSysProcInfo(const char *file_addr) {
   /* the file addr is always /proc/[pid]/stat. */
+  return 1;
 }
 
 int OpenProcDir(const char *dir_addr) {
@@ -31,7 +32,7 @@ int OpenProcDir(const char *dir_addr) {
     while ((ptr = readdir(dir)) != NULL) {
       /* create process information */
       // printf("dir name is:%s \n ", ptr->d_name);
-      char file_addr[30];
+      char file_addr[300];
       sprintf(file_addr, "%s%s%s", dir_addr, ptr->d_name, "/stat");
       printf("the file name is %s",file_addr);
       //int ret = FillSysProcInfo(dir_addr);
