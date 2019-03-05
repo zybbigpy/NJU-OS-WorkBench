@@ -6,7 +6,7 @@
 #include <string.h>
 #include <sys/types.h>
 
-#define MAX_PROC_NUM 2048
+#define MAX_PROC_NUM 4096
 #define MAX_FILE_ADDR_LEN 300
 
 /*   the process information is in /proc/[pid]/stat.
@@ -17,27 +17,31 @@ typedef struct ProcInfo {
   char comm[20];
   char state;
   pid_t ppid;
-  pid_t pgrp;
+  // pid_t pgrp;
 } ProcInfo;
 
 ProcInfo sys_porcs[MAX_PROC_NUM];
 
-bool IsStrDigt(const char *str) {
-  bool ret = true;
-  for (int i = 0; i < strlen(str); i++) {
-    if (!isdigit(str[i])) {
-      ret = false;
-      break;
-    }
-  }
-  return ret;
-  // return isdigit(str[0]);
-}
-
 /* the file addr is always /proc/[pid]/stat. */
-int FillSysProcInfo(const char *file_addr) {
-  
-  return 1;
+int FillSysProcInfo(const char *file_addr, int proc_index) {
+
+  FILE *file = fopen(file_addr, "r");
+  if (file) {
+    if (fscanf(file, "%d%s%c%d%d", &sys_porcs[proc_index].pid,
+               &sys_porcs[proc_index].comm, &sys_porcs[proc_index].state,
+               &sys_porcs[proc_index].ppid)) {
+      printf("process info is %d, %s, %c, %d, %d \n",sys_porcs[proc_index].pid,
+               sys_porcs[proc_index].comm, sys_porcs[proc_index].state,
+               sys_porcs[proc_index].ppid);
+    } else {
+      perror("write proc fail\n");
+      return 1;
+    }
+  } else {
+    perror("open file fail \n");
+    return 1;
+  }
+  return 0;
 }
 
 int OpenProcDir(const char *dir_addr) {
@@ -47,12 +51,19 @@ int OpenProcDir(const char *dir_addr) {
   if (dir) {
     while ((ptr = readdir(dir)) != NULL) {
       /* create process information */
-      if(IsStrDigt(ptr->d_name)) {
+      int proc_index = 0;
+      if (isdigit(ptr->d_name[0])) {
         char file_addr[300];
         sprintf(file_addr, "%s%s%s", dir_addr, ptr->d_name, "/stat");
-        printf("the file name is %s \n",file_addr);
+        // printf("the file name is %s \n", file_addr);
+        int ret = FillSysProcInfo(file_addr, proc_index);
+        if (ret) {
+          perror("write sys procs array fail. \n");
+          return 1;
+        } else {
+          proc_index++;
+        }
       }
-     
     }
   } else {
     perror("open dir fail\n");
