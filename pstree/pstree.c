@@ -31,9 +31,9 @@ int FillSysProcInfo(const char *file_addr, int proc_index) {
     fscanf(fp, "%d%s%s%d%d", &sys_porcs[proc_index].pid,
            sys_porcs[proc_index].comm, sys_porcs[proc_index].state,
            &sys_porcs[proc_index].ppid, &sys_porcs[proc_index].pgrp);
-    // printf("process info is %d, %s, %s, %d\n", sys_porcs[proc_index].pid,
-    //        sys_porcs[proc_index].comm, sys_porcs[proc_index].state,
-    //        sys_porcs[proc_index].ppid);
+     printf("process info is %d, %s, %s, %d\n", sys_porcs[proc_index].pid,
+            sys_porcs[proc_index].comm, sys_porcs[proc_index].state,
+            sys_porcs[proc_index].ppid);
     fclose(fp);
   } else {
     perror("open file fail \n");
@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
   // assert(!argv[argc]); // always true
   // return 0;
 
-  OpenProcDir("/proc/");
+  //OpenProcDir("/proc/");
 
   int opt;
   while ((opt = getopt(argc, argv, "av"))!=-1 ) {
@@ -99,6 +99,7 @@ int main(int argc, char *argv[]) {
     {
       case 'a':
         sorted = 1;
+        OpenProcDir("/proc");
         break;
 
       case 'v':
