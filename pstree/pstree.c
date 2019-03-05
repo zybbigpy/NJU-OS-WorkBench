@@ -1,10 +1,13 @@
 #include <assert.h>
+#include <ctype.h>
 #include <dirent.h>
+#include <stdbool.h>
 #include <stdio.h>
-#include <sys/types.h>
 #include <string.h>
+#include <sys/types.h>
 
 #define MAX_PROC_NUM 2048
+#define MAX_FILE_ADDR_LEN 300
 
 /*   the process information is in /proc/[pid]/stat.
 **   ref: man 5 proc
@@ -19,8 +22,20 @@ typedef struct ProcInfo {
 
 ProcInfo sys_porcs[MAX_PROC_NUM];
 
+bool IsStrDigt(const char *str) {
+  bool ret = true;
+  for (int i = 0; i < strlen(str); i++) {
+    if (!isdigit(str[i])) {
+      ret = false;
+      break;
+    }
+  }
+  return ret;
+}
+
+/* the file addr is always /proc/[pid]/stat. */
 int FillSysProcInfo(const char *file_addr) {
-  /* the file addr is always /proc/[pid]/stat. */
+  
   return 1;
 }
 
@@ -31,11 +46,12 @@ int OpenProcDir(const char *dir_addr) {
   if (dir) {
     while ((ptr = readdir(dir)) != NULL) {
       /* create process information */
-      // printf("dir name is:%s \n ", ptr->d_name);
-      char file_addr[300];
-      sprintf(file_addr, "%s%s%s", dir_addr, ptr->d_name, "/stat");
-      printf("the file name is %s \n",file_addr);
-      //int ret = FillSysProcInfo(dir_addr);
+      if(IsStrDigt(ptr->d_name)) {
+        char file_addr[300];
+        sprintf(file_addr, "%s%s%s", dir_addr, ptr->d_name, "/stat");
+        // printf("the file name is %s \n",file_addr);
+      }
+     
     }
   } else {
     perror("open dir fail\n");
