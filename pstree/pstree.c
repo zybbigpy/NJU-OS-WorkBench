@@ -7,7 +7,7 @@
 #include <string.h>
 #include <sys/types.h>
 
-#define MAX_PROC_NUM 4096
+#define MAX_PROC_NUM 200
 #define MAX_FILE_ADDR_LEN 300
 
 /*   the process information is in /proc/[pid]/stat.
