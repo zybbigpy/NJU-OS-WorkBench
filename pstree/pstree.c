@@ -50,7 +50,7 @@ int OpenProcDir(const char *dir_addr) {
       if(IsStrDigt(ptr->d_name)) {
         char file_addr[300];
         sprintf(file_addr, "%s%s%s", dir_addr, ptr->d_name, "/stat");
-        // printf("the file name is %s \n",file_addr);
+        printf("the file name is %s \n",file_addr);
       }
      
     }
