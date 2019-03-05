@@ -79,6 +79,8 @@ void PrintVersion() {
   printf(" Welcome, this is a simple pstree, version 0.1 \n");
 }
 
+int sorted = 0;
+
 int main(int argc, char *argv[]) {
   // printf("Hello, World!\n");
   // int i;
@@ -92,7 +94,6 @@ int main(int argc, char *argv[]) {
   OpenProcDir("/proc/");
 
   int opt;
-  int sorted = 0;
   while ((opt = getopt(argc, argv, "av"))!=-1 ) {
     switch (opt)
     {
