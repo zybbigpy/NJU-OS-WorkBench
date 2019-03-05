@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
   OpenProcDir("/proc/");
 
   int opt;
-  int sorted;
+  int sorted = 0;
   while ((opt = getopt(argc, argv, "av"))!=-1 ) {
     switch (opt)
     {
