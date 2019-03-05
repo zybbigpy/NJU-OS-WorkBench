@@ -47,11 +47,11 @@ int FillSysProcInfo(const char *file_addr, int *proc_index) {
 int OpenProcDir(const char *dir_addr) {
   DIR *dir;
   struct dirent *ptr;
+  int proc_index = 0;
   dir = opendir(dir_addr);
   if (dir) {
     while ((ptr = readdir(dir)) != NULL) {
       /* create process information */
-      int proc_index = 0;
       if (isdigit(ptr->d_name[0])) {
         char file_addr[300];
         sprintf(file_addr, "%s%s%s", dir_addr, ptr->d_name, "/stat");
