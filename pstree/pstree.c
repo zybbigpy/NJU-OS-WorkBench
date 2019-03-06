@@ -1,13 +1,13 @@
 #include <assert.h>
 #include <ctype.h>
+#include <dirent.h>
+#include <getopt.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <dirent.h>
-#include <stdbool.h>
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <getopt.h>
 
 #define MAX_PROC_NUM 1000
 #define MAX_FILE_ADDR_LEN 300
@@ -154,11 +154,10 @@ struct {
 int opt;
 static const char *optstring = "pnv";
 static const struct option long_options[] = {
-  {"show_pids", no_argument, NULL, 'p' },
-	{"numeric_sort", no_argument, NULL, 'n'},
-	{"version", no_argument, NULL, 'v'},
-  { NULL, no_argument, NULL, 0}
-};
+    {"show_pids", no_argument, NULL, 'p'},
+    {"numeric_sort", no_argument, NULL, 'n'},
+    {"version", no_argument, NULL, 'v'},
+    {NULL, no_argument, NULL, 0}};
 
 void ShowVersion() {
   printf("pstree, it is under construction\n");
@@ -166,7 +165,8 @@ void ShowVersion() {
 }
 
 void ShowUse() {
-  printf("How to use ? [-p, --show-pids] [-n,--numeric-sort] [-v, --version]\n");
+  printf(
+      "How to use ? [-p, --show-pids] [-n,--numeric-sort] [-v, --version]\n");
   exit(EXIT_FAILURE);
 }
 
@@ -184,26 +184,26 @@ int main(int argc, char *argv[]) {
   BuildPstree(root, sys_porcs);
   PrintPstree(root);
 
-  while(1){
-    opt =getopt_long(argc, argv, optstring, long_options, NULL);
-    if(opt == -1) {
-      perror("some thing wrong\n");
+  while (1) {
+    opt = getopt_long(argc, argv, optstring, long_options, NULL);
+    if (opt == -1) {
+      perror("please add args!\n");
+      exit(EXIT_FAILURE);
       break;
     }
-    switch (opt)
-    {
-      case 'p':
-        global_setting.show_pid = 1;
-        break;
-      case 'n':
-        global_setting.numeric_sort = 1;
-        break;
-      case 'v':
-        ShowVersion();
-        break;
-      default:
-        ShowUse();      
-    } 
+    switch (opt) {
+    case 'p':
+      global_setting.show_pid = 1;
+      break;
+    case 'n':
+      global_setting.numeric_sort = 1;
+      break;
+    case 'v':
+      ShowVersion();
+      break;
+    default:
+      ShowUse();
+    }
   }
 
   printf(" the number of process is %d \n", num_procs);
