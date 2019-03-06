@@ -2,17 +2,21 @@
 #include <ctype.h>
 #include <dirent.h>
 #include <stdbool.h>
-#include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
+#include <unistd.h>
 
-#define MAX_PROC_NUM 20
+#define MAX_PROC_NUM 1000
 #define MAX_FILE_ADDR_LEN 300
+
+/*===================== BUILD PROCESS ======================*/
 
 /*   the process information is in /proc/[pid]/stat.
 **   ref: man 5 proc
 */
+
 typedef struct ProcInfo {
   pid_t pid;
   char comm[50];
@@ -22,24 +26,28 @@ typedef struct ProcInfo {
 } ProcInfo;
 
 ProcInfo sys_porcs[MAX_PROC_NUM];
+int num_procs = 0;
 
-/* the file addr is always /proc/[pid]/stat. */
+/*
+** the file address is always /proc/[pid]/stat.
+*/
 int FillSysProcInfo(const char *file_addr, int *proc_index) {
 
-  printf(" the process index in the array is %d\n", *proc_index);
+  // printf(" the process index in the array is %d\n", *proc_index);
   FILE *fp = fopen(file_addr, "r");
   if (fp) {
     fscanf(fp, "%d%s%s%d%d", &sys_porcs[*proc_index].pid,
            sys_porcs[*proc_index].comm, sys_porcs[*proc_index].state,
            &sys_porcs[*proc_index].ppid, &sys_porcs[*proc_index].pgrp);
-     printf("process info is %d, %s, %s, %d\n", sys_porcs[*proc_index].pid,
-            sys_porcs[*proc_index].comm, sys_porcs[*proc_index].state,
-            sys_porcs[*proc_index].ppid);
-    fclose(fp);
+    printf("process info is %d, %s, %s, %d\n", sys_porcs[*proc_index].pid,
+           sys_porcs[*proc_index].comm, sys_porcs[*proc_index].state,
+           sys_porcs[*proc_index].ppid);
+
   } else {
     perror("open file fail \n");
     return 1;
   }
+  fclose(fp);
   (*proc_index)++;
   return 0;
 }
@@ -47,7 +55,7 @@ int FillSysProcInfo(const char *file_addr, int *proc_index) {
 int OpenProcDir(const char *dir_addr) {
   DIR *dir;
   struct dirent *ptr;
-  int proc_index = 0;
+  int proc_index = 1;
   dir = opendir(dir_addr);
   if (dir) {
     while ((ptr = readdir(dir)) != NULL) {
@@ -61,9 +69,9 @@ int OpenProcDir(const char *dir_addr) {
           perror("write sys procs array fail. \n");
           return 1;
         } else {
-          printf("I am here and there is a bug ...\n");
-          //proc_index = proc_index + 1;
-          if(proc_index == MAX_PROC_NUM) {
+          // printf("I am here and there is a bug ...\n");
+          // proc_index = proc_index + 1;
+          if (proc_index == MAX_PROC_NUM) {
             perror("proc array is full!\n");
             return 1;
           }
@@ -74,44 +82,103 @@ int OpenProcDir(const char *dir_addr) {
     perror("open dir fail\n");
     return 1;
   }
+  num_procs = proc_index;
   closedir(dir);
   return 0;
 }
 
+/*===================== BUILD PSTREE ======================*/
+
+/*
+** use brother-child tree structure to represent the tree is a good idea
+**
+*/
+typedef struct TreeNode {
+  ProcInfo *procs;
+  TreeNode *left_brother;
+  TreeNode *right_child;
+} TreeNode;
+
+TreeNode *FindPrarentNode(TreeNode *root, pid_t ppid) {
+  if (root == NULL)
+    return NULL;
+  if (root->procs->pid == ppid)
+    return root;
+  TreeNode *node = FindPrarentNode(root->left_brother, ppid);
+  if (node != NULL)
+    return node;
+  node = FindPrarentNode(root->right_child, ppid);
+  if (node != NULL) {
+    return node;
+  } else {
+    return NULL;
+  }
+}
+
+int AddChildNode(TreeNode *root, ProcInfo *instance) {
+  TreeNode *child = (TreeNode *)malloc(sizeof(TreeNode));
+  child->procs = instance;
+  child->left_brother = NULL;
+  child->right_child = NULL;
+  TreeNode *parent = FindPrarentNode(root, instance->ppid);
+  if (parent) {
+    if (parent->right_child == NULL) {
+      parent->right_child = child;
+    } else {
+      TreeNode *ptr = parent->right_child;
+      while (ptr->left_brother != NULL) {
+        ptr = ptr->left_brother;
+      }
+      ptr->left_brother = child;
+    }
+    return 0;
+  } else {
+    return 1;
+  }
+}
+
+void BuildPstree(TreeNode *root, ProcInfo sys_porcs[]) {
+  for (int i = 1; i != num_procs + 1; ++i) {
+    int ret = AddChildNode(root, &(sys_porcs[i]));
+    if(ret) {
+      perror("Add Child Node fail\n");
+      exit(EXIT_FAILURE);
+    }
+  }
+}
+
+void PrintPstree() {}
+
+/*================= FUNCTION RELATED =====================*/
+// int sorted = 0;
 void PrintVersion() {
   printf(" Welcome, this is a simple pstree, version 0.1 \n");
 }
 
-int sorted = 0;
-
 int main(int argc, char *argv[]) {
-  // printf("Hello, World!\n");
-  // int i;
-  // for +(i = 0; i < argc; i++) {
-  //   assert(argv[i]); // always true
-  //   printf("argv[%d] = %s\n", i, argv[i]);
-  // }
-  // assert(!argv[argc]); // always true
-  // return 0;
-
-  //OpenProcDir("/proc/");
+  sys_porcs[0].pid = 0;
   OpenProcDir("/proc/");
-  int opt;
-  while ((opt = getopt(argc, argv, "av"))!=-1 ) {
-    switch (opt)
-    {
-      case 'a':
-        sorted = 1;
-        OpenProcDir("/proc/");
-        break;
+  TreeNode *root = (TreeNode *)malloc(sizeof(TreeNode));
+  root->procs = &(sys_porcs[0]);
+  root->left_brother = NULL;
+  root->right_child = NULL;
 
-      case 'v':
-        PrintVersion();
-        break;
-      default:
-        OpenProcDir("/p");
-        break;
-    }
-  }
+  BuildPstree(root, sys_porcs);
+
+  // int opt;
+  // while ((opt = getopt(argc, argv, "av")) != -1) {
+  //   switch (opt) {
+  //   case 'a':
+  //     sorted = 1;
+  //     OpenProcDir("/proc/");
+  //     break;
+  //   case 'v':
+  //     PrintVersion();
+  //     break;
+  //   default:
+  //     OpenProcDir("/p");
+  //     break;
+  //   }
+  // }
   return 0;
 }
