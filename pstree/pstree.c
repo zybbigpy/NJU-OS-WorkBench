@@ -37,9 +37,9 @@ int FillSysProcInfo(const char *file_addr, int *proc_index) {
     fscanf(fp, "%d%s%s%d%d", &sys_porcs[*proc_index].pid,
            sys_porcs[*proc_index].comm, sys_porcs[*proc_index].state,
            &sys_porcs[*proc_index].ppid, &sys_porcs[*proc_index].pgrp);
-    // printf("process info is %d, %s, %s, %d\n", sys_porcs[*proc_index].pid,
-    //        sys_porcs[*proc_index].comm, sys_porcs[*proc_index].state,
-    //        sys_porcs[*proc_index].ppid);
+    printf("process info is %d, %s, %s, %d\n", sys_porcs[*proc_index].pid,
+           sys_porcs[*proc_index].comm, sys_porcs[*proc_index].state,
+           sys_porcs[*proc_index].ppid);
 
   } else {
     perror("open file fail \n");
