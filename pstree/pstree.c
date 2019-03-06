@@ -32,8 +32,6 @@ int num_procs = 0;
 ** the file address is always /proc/[pid]/stat.
 */
 int FillSysProcInfo(const char *file_addr, int *proc_index) {
-
-  // printf(" the process index in the array is %d\n", *proc_index);
   FILE *fp = fopen(file_addr, "r");
   if (fp) {
     fscanf(fp, "%d%s%s%d%d", &sys_porcs[*proc_index].pid,
@@ -59,18 +57,14 @@ int OpenProcDir(const char *dir_addr) {
   dir = opendir(dir_addr);
   if (dir) {
     while ((ptr = readdir(dir)) != NULL) {
-      /* create process information */
       if (isdigit(ptr->d_name[0])) {
         char file_addr[300];
         sprintf(file_addr, "%s%s%s", dir_addr, ptr->d_name, "/stat");
-        // printf("the file name is %s \n", file_addr);
         int ret = FillSysProcInfo(file_addr, &proc_index);
         if (ret) {
           perror("write sys procs array fail. \n");
           return 1;
         } else {
-          // printf("I am here and there is a bug ...\n");
-          // proc_index = proc_index + 1;
           if (proc_index == MAX_PROC_NUM) {
             perror("proc array is full!\n");
             return 1;
@@ -140,14 +134,14 @@ int AddChildNode(TreeNode *root, ProcInfo *instance) {
 void BuildPstree(TreeNode *root, ProcInfo sys_porcs[]) {
   for (int i = 1; i != num_procs + 1; ++i) {
     int ret = AddChildNode(root, &(sys_porcs[i]));
-    if(ret) {
+    if (ret) {
       perror("Add Child Node fail\n");
       exit(EXIT_FAILURE);
     }
   }
 }
 
-void PrintPstree() {}
+void PrintPstree(TreeNode *root) {}
 
 /*================= FUNCTION RELATED =====================*/
 // int sorted = 0;
@@ -164,21 +158,6 @@ int main(int argc, char *argv[]) {
   root->right_child = NULL;
 
   BuildPstree(root, sys_porcs);
-
-  // int opt;
-  // while ((opt = getopt(argc, argv, "av")) != -1) {
-  //   switch (opt) {
-  //   case 'a':
-  //     sorted = 1;
-  //     OpenProcDir("/proc/");
-  //     break;
-  //   case 'v':
-  //     PrintVersion();
-  //     break;
-  //   default:
-  //     OpenProcDir("/p");
-  //     break;
-  //   }
-  // }
+  printf(" the number of process is %d \n", num_procs);
   return 0;
 }
