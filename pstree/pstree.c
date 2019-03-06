@@ -37,9 +37,9 @@ int FillSysProcInfo(const char *file_addr, int *proc_index) {
     fscanf(fp, "%d%s%s%d%d", &sys_porcs[*proc_index].pid,
            sys_porcs[*proc_index].comm, sys_porcs[*proc_index].state,
            &sys_porcs[*proc_index].ppid, &sys_porcs[*proc_index].pgrp);
-    printf("process info is %d, %s, %s, %d\n", sys_porcs[*proc_index].pid,
-           sys_porcs[*proc_index].comm, sys_porcs[*proc_index].state,
-           sys_porcs[*proc_index].ppid);
+    // printf("process info is %d, %s, %s, %d\n", sys_porcs[*proc_index].pid,
+    //        sys_porcs[*proc_index].comm, sys_porcs[*proc_index].state,
+    //        sys_porcs[*proc_index].ppid);
 
   } else {
     perror("open file fail \n");
@@ -156,8 +156,8 @@ int main(int argc, char *argv[]) {
   root->procs = &(sys_porcs[0]);
   root->left_brother = NULL;
   root->right_child = NULL;
-
   BuildPstree(root, sys_porcs);
+  PrintPstree(root);
   printf(" the number of process is %d \n", num_procs);
   return 0;
 }
