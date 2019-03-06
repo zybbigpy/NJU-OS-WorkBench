@@ -197,6 +197,7 @@ int main(int argc, char *argv[]) {
         break;
       case 'v':
         ShowVersion();
+        break;
       default:
         ShowUse();      
     } 
