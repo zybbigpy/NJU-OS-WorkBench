@@ -189,7 +189,6 @@ int main(int argc, char *argv[]) {
     if (opt == -1) {
       perror("please add args!\n");
       exit(EXIT_FAILURE);
-      break;
     }
     switch (opt) {
     case 'p':
