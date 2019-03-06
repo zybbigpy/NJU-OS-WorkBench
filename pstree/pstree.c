@@ -135,7 +135,7 @@ void BuildPstree(TreeNode *root, ProcInfo sys_porcs[]) {
   for (int i = 1; i != num_procs + 1; ++i) {
     int ret = AddChildNode(root, &(sys_porcs[i]));
     if (ret) {
-      perror("Add Child Node fail\n");
+      perror("Add Child Node fail,cannot find parent node\n");
       exit(EXIT_FAILURE);
     }
   }
