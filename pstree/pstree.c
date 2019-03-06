@@ -186,7 +186,10 @@ int main(int argc, char *argv[]) {
 
   while(1){
     opt =getopt_long(argc, argv, optstring, long_options, NULL);
-    if(opt == -1) break;
+    if(opt == -1) {
+      perror("some thing wrong\n");
+      break;
+    }
     switch (opt)
     {
       case 'p':
