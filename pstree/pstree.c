@@ -95,8 +95,8 @@ int OpenProcDir(const char *dir_addr) {
 */
 typedef struct TreeNode {
   ProcInfo *procs;
-  TreeNode *left_brother;
-  TreeNode *right_child;
+  struct TreeNode *left_brother;
+  struct TreeNode *right_child;
 } TreeNode;
 
 TreeNode *FindPrarentNode(TreeNode *root, pid_t ppid) {
