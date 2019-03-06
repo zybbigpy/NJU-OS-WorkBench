@@ -181,8 +181,7 @@ int main(int argc, char *argv[]) {
   root->procs = &(sys_porcs[0]);
   root->left_brother = NULL;
   root->right_child = NULL;
-  BuildPstree(root, sys_porcs);
-  PrintPstree(root);
+
 
   while (1) {
     opt = getopt_long(argc, argv, optstring, long_options, NULL);
@@ -205,6 +204,8 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  printf(" the number of process is %d \n", num_procs);
-  return 0;
+  BuildPstree(root, sys_porcs);
+  PrintPstree(root);
+  // printf(" the number of process is %d \n", num_procs);
+  exit(EXIT_SUCCESS);
 }
