@@ -14,18 +14,18 @@
 
 /*================= GLOBAL RELATED =====================*/
 
-struct {
-  int numeric_sort;
-  int show_pid;
-} global_setting;
+// struct {
+//   int numeric_sort;
+//   int show_pid;
+// } global_setting;
 
-int opt;
-static const char *optstring = "pnv";
-static const struct option long_options[] = {
-    {"show_pids", no_argument, NULL, 'p'},
-    {"numeric_sort", no_argument, NULL, 'n'},
-    {"version", no_argument, NULL, 'v'},
-    {NULL, no_argument, NULL, 0}};
+// int opt;
+// static const char *optstring = "pnv";
+// static const struct option long_options[] = {
+//     {"show_pids", no_argument, NULL, 'p'},
+//     {"numeric_sort", no_argument, NULL, 'n'},
+//     {"version", no_argument, NULL, 'v'},
+//     {NULL, no_argument, NULL, 0}};
 
 /*===================== BUILD PROCESS ======================*/
 
