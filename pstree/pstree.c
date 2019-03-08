@@ -9,14 +9,25 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#define MAX_PROC_NUM 1000
+#define MAX_PROC_NUM 1024
 #define MAX_FILE_ADDR_LEN 300
 
-/*===================== BUILD PROCESS ======================*/
+/*================= GLOBAL RELATED =====================*/
 
-/*   the process information is in /proc/[pid]/stat.
-**   ref: man 5 proc
-*/
+struct {
+  int numeric_sort;
+  int show_pid;
+} global_setting;
+
+int opt;
+static const char *optstring = "pnv";
+static const struct option long_options[] = {
+    {"show_pids", no_argument, NULL, 'p'},
+    {"numeric_sort", no_argument, NULL, 'n'},
+    {"version", no_argument, NULL, 'v'},
+    {NULL, no_argument, NULL, 0}};
+
+/*===================== BUILD PROCESS ======================*/
 
 typedef struct ProcInfo {
   pid_t pid;
@@ -24,14 +35,13 @@ typedef struct ProcInfo {
   char state[4];
   pid_t ppid;
   pid_t pgrp;
-} ProcInfo;
+  int level; // the child level in the pstree
+} ProcInfo; // ref: man proc
 
 ProcInfo sys_porcs[MAX_PROC_NUM];
 int num_procs = 0;
 
-/*
-** the file address is always /proc/[pid]/stat.
-*/
+/* the file address is always /proc/[pid]/stat. */
 int FillSysProcInfo(const char *file_addr, int *proc_index) {
   FILE *fp = fopen(file_addr, "r");
   if (fp) {
@@ -44,11 +54,31 @@ int FillSysProcInfo(const char *file_addr, int *proc_index) {
 
   } else {
     perror("open file fail \n");
-    return 1;
+    exit(EXIT_FAILURE);
   }
   fclose(fp);
   (*proc_index)++;
   return 0;
+}
+
+pid_t FindPpid(pid_t pid) {
+  pid_t ret = 0;
+  for(int i = 1; i <= num_procs; ++i) {
+    if(sys_porcs[i].pid == pid)
+      ret = sys_porcs[i].ppid;
+  }
+  return ret;
+}
+
+void FillProcsLevel(ProcInfo sys_porcs[]) {
+  for(int i = 1; i <=num_procs; ++i) {
+    sys_porcs[i].level = 1;
+    pid_t ppid = FindPpid(sys_porcs[i].pid);
+    while(ppid != 0) {
+      ppid = FindPpid(ppid);
+      sys_porcs[i].level++;
+    }
+  }
 }
 
 int OpenProcDir(const char *dir_addr) {
@@ -64,30 +94,29 @@ int OpenProcDir(const char *dir_addr) {
         int ret = FillSysProcInfo(file_addr, &proc_index);
         if (ret) {
           perror("write sys procs array fail. \n");
-          return 1;
+          exit(EXIT_FAILURE);
         } else {
           if (proc_index == MAX_PROC_NUM) {
             perror("proc array is full!\n");
-            return 1;
+            exit(EXIT_FAILURE);
           }
         }
       }
     }
   } else {
     perror("open dir fail\n");
-    return 1;
+    exit(EXIT_FAILURE);
   }
   num_procs = proc_index;
   closedir(dir);
+  FillProcsLevel(sys_porcs);
   return 0;
 }
 
+
 /*===================== BUILD PSTREE ======================*/
 
-/*
-** use brother-child tree structure to represent the tree is a good idea
-**
-*/
+/* use right-child left-sibling binary tree */
 typedef struct TreeNode {
   ProcInfo *procs;
   struct TreeNode *left_brother;
@@ -142,22 +171,43 @@ void BuildPstree(TreeNode *root, ProcInfo sys_porcs[]) {
   }
 }
 
-void PrintPstree(TreeNode *root) {}
+#define MAX_TREE_DEPTH 20
+int rec[MAX_TREE_DEPTH] = {0};
 
-/*================= GLOBAL RELATED =====================*/
+void PrintPstree(TreeNode *root) {
+  if(root == NULL) {
+    return;
+  }else
+  {
+    if(root->left_brother) {
+      rec[root->procs->level] = 1;
+    } else {
+      rec[root->procs->level] = 0;
+    }
+    for(size_t i = 0; i < root->procs->level;   i++)
+    {
+        if(rec[i] == 0) {
+          printf("     ");
+        } else
+        {
+          printf("|    ");
+        }
+    }
+    printf("+----%d\n", root->procs->pid);
+    PrintPstree(root->right_child);
+    PrintPstree(root->left_brother);
+  }
+  
+}
 
-struct {
-  int numeric_sort;
-  int show_pid;
-} global_setting;
-
-int opt;
-static const char *optstring = "pnv";
-static const struct option long_options[] = {
-    {"show_pids", no_argument, NULL, 'p'},
-    {"numeric_sort", no_argument, NULL, 'n'},
-    {"version", no_argument, NULL, 'v'},
-    {NULL, no_argument, NULL, 0}};
+void DestroyPstree(TreeNode *root) {
+  // free the memory of pstree
+  if(root == NULL) return;
+  DestroyPstree(root->left_brother);
+  DestroyPstree(root->right_child);
+  free(root);
+}
+/*================= SHOW FUNCIONS =====================*/
 
 void ShowVersion() {
   printf("pstree, it is under construction\n");
