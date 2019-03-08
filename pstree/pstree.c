@@ -88,6 +88,7 @@ int OpenProcDir(const char *dir_addr) {
   dir = opendir(dir_addr);
   if (dir) {
     while ((ptr = readdir(dir)) != NULL) {
+      printf("ptr->dnam %c\n",ptr->d_name[0]);
       if (isdigit(ptr->d_name[0])) {
         char file_addr[300];
         sprintf(file_addr, "%s%s%s", dir_addr, ptr->d_name, "/stat");
