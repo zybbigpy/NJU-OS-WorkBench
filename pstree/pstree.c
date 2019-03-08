@@ -233,26 +233,26 @@ int main(int argc, char *argv[]) {
   root->right_child = NULL;
 
 
-  while (1) {
-    opt = getopt_long(argc, argv, optstring, long_options, NULL);
-    if (opt == -1) {
-      perror("please add args!\n");
-      exit(EXIT_FAILURE);
-    }
-    switch (opt) {
-    case 'p':
-      global_setting.show_pid = 1;
-      break;
-    case 'n':
-      global_setting.numeric_sort = 1;
-      break;
-    case 'v':
-      ShowVersion();
-      break;
-    default:
-      ShowUse();
-    }
-  }
+  // while (1) {
+  //   opt = getopt_long(argc, argv, optstring, long_options, NULL);
+  //   if (opt == -1) {
+  //     perror("please add args!\n");
+  //     exit(EXIT_FAILURE);
+  //   }
+  //   switch (opt) {
+  //   case 'p':
+  //     global_setting.show_pid = 1;
+  //     break;
+  //   case 'n':
+  //     global_setting.numeric_sort = 1;
+  //     break;
+  //   case 'v':
+  //     ShowVersion();
+  //     break;
+  //   default:
+  //     ShowUse();
+  //   }
+  // }
 
   BuildPstree(root, sys_porcs);
   PrintPstree(root);
