@@ -185,12 +185,12 @@ void PrintPstree(TreeNode *root) {
     }
     for (size_t i = 0; i < root->procs->level; i++) {
       if (rec[i] == 0) {
-        printf("     ");
+        printf("       ");
       } else {
-        printf("|    ");
+        printf("|      ");
       }
     }
-    printf("+----%d\n", root->procs->pid);
+    printf("+------%d %s\n", root->procs->pid, root->procs->comm);
     PrintPstree(root->right_child);
     PrintPstree(root->left_brother);
   }
@@ -213,8 +213,7 @@ void ShowVersion() {
 }
 
 void ShowUse() {
-  printf(
-      "How to use ? [-p, --show-pids] [-n,--numeric-sort] [-v, --version]\n");
+  printf("How to use? [-p, --show-pids] [-n,--numeric-sort] [-v, --version]\n");
   exit(EXIT_FAILURE);
 }
 
@@ -232,7 +231,8 @@ int main(int argc, char *argv[]) {
 
   while (1) {
     opt = getopt_long(argc, argv, optstring, long_options, NULL);
-    if (opt == -1) break;
+    if (opt == -1)
+      break;
     switch (opt) {
     case 'p':
       global_setting.show_pid = 1;
@@ -250,6 +250,5 @@ int main(int argc, char *argv[]) {
 
   BuildPstree(root, sys_porcs);
   PrintPstree(root);
-  // printf(" the number of process is %d \n", num_procs);
   exit(EXIT_SUCCESS);
 }
