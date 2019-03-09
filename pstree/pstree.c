@@ -208,7 +208,7 @@ void DestroyPstree(TreeNode *root) {
 /*================= SHOW FUNCIONS =====================*/
 
 void ShowVersion() {
-  printf("pstree, it is v-0.1\n");
+  printf("BRIEF-Pstree, Version-0.1, copyright@Wangqian Miao, 151242031--NJU \n");
   exit(EXIT_SUCCESS);
 }
 
