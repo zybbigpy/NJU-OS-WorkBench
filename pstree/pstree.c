@@ -37,7 +37,7 @@ typedef struct ProcInfo {
   pid_t ppid;
   pid_t pgrp;
   int level; // the child level in the pstree
-} ProcInfo; // ref: man proc
+} ProcInfo;  // ref: man proc
 
 ProcInfo sys_porcs[MAX_PROC_NUM];
 int num_procs = 0;
@@ -64,18 +64,18 @@ int FillSysProcInfo(const char *file_addr, int *proc_index) {
 
 pid_t FindPpid(pid_t pid) {
   pid_t ret = 0;
-  for(int i = 1; i <= num_procs; ++i) {
-    if(sys_porcs[i].pid == pid)
+  for (int i = 1; i <= num_procs; ++i) {
+    if (sys_porcs[i].pid == pid)
       ret = sys_porcs[i].ppid;
   }
   return ret;
 }
 
 void FillProcsLevel(ProcInfo sys_porcs[]) {
-  for(int i = 1; i <=num_procs; ++i) {
+  for (int i = 1; i <= num_procs; ++i) {
     sys_porcs[i].level = 1;
     pid_t ppid = FindPpid(sys_porcs[i].pid);
-    while(ppid != 0) {
+    while (ppid != 0) {
       ppid = FindPpid(ppid);
       sys_porcs[i].level++;
     }
@@ -89,7 +89,7 @@ int OpenProcDir(const char *dir_addr) {
   dir = opendir(dir_addr);
   if (dir) {
     while ((ptr = readdir(dir)) != NULL) {
-      printf("ptr->dnam %c\n",ptr->d_name[0]);
+      printf("ptr->dnam %c\n", ptr->d_name[0]);
       if (isdigit(ptr->d_name[0])) {
         char file_addr[300];
         sprintf(file_addr, "%s%s%s", dir_addr, ptr->d_name, "/stat");
@@ -114,7 +114,6 @@ int OpenProcDir(const char *dir_addr) {
   FillProcsLevel(sys_porcs);
   return 0;
 }
-
 
 /*===================== BUILD PSTREE ======================*/
 
@@ -174,38 +173,34 @@ void BuildPstree(TreeNode *root, ProcInfo sys_porcs[]) {
   }
 }
 
-
 int rec[MAX_TREE_DEPTH] = {0};
 
 void PrintPstree(TreeNode *root) {
-  if(root == NULL) {
+  if (root == NULL) {
     return;
-  }else
-  {
-    if(root->left_brother) {
+  } else {
+    if (root->left_brother) {
       rec[root->procs->level] = 1;
     } else {
       rec[root->procs->level] = 0;
     }
-    for(size_t i = 0; i < root->procs->level;   i++)
-    {
-        if(rec[i] == 0) {
-          printf("     ");
-        } else
-        {
-          printf("|    ");
-        }
+    for (size_t i = 0; i < root->procs->level; i++) {
+      if (rec[i] == 0) {
+        printf("     ");
+      } else {
+        printf("|    ");
+      }
     }
     printf("+----%d\n", root->procs->pid);
     PrintPstree(root->right_child);
     PrintPstree(root->left_brother);
   }
-  
 }
 
 void DestroyPstree(TreeNode *root) {
   // free the memory of pstree
-  if(root == NULL) return;
+  if (root == NULL)
+    return;
   DestroyPstree(root->left_brother);
   DestroyPstree(root->right_child);
   free(root);
@@ -236,13 +231,9 @@ int main(int argc, char *argv[]) {
   root->left_brother = NULL;
   root->right_child = NULL;
 
-
   while (1) {
     opt = getopt_long(argc, argv, optstring, long_options, NULL);
-    if (opt == -1) {
-      perror("please add args!\n");
-      exit(EXIT_FAILURE);
-    }
+    if (opt == -1) break;
     switch (opt) {
     case 'p':
       global_setting.show_pid = 1;
@@ -259,7 +250,7 @@ int main(int argc, char *argv[]) {
   }
 
   BuildPstree(root, sys_porcs);
-  // PrintPstree(root);
+  PrintPstree(root);
   // printf(" the number of process is %d \n", num_procs);
   exit(EXIT_SUCCESS);
 }
