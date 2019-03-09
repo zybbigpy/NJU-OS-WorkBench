@@ -36,8 +36,8 @@ typedef struct ProcInfo {
   char state[4];
   pid_t ppid;
   pid_t pgrp;
-  int level; // the child level in the pstree
-} ProcInfo;  // ref: man proc
+  int level;  // the child level in the pstree
+} ProcInfo;   // ref: man proc
 
 ProcInfo sys_porcs[MAX_PROC_NUM];
 int num_procs = 0;
@@ -65,8 +65,7 @@ int FillSysProcInfo(const char *file_addr, int *proc_index) {
 pid_t FindPpid(pid_t pid) {
   pid_t ret = 0;
   for (int i = 1; i <= num_procs; ++i) {
-    if (sys_porcs[i].pid == pid)
-      ret = sys_porcs[i].ppid;
+    if (sys_porcs[i].pid == pid) ret = sys_porcs[i].ppid;
   }
   return ret;
 }
@@ -124,13 +123,10 @@ typedef struct TreeNode {
 } TreeNode;
 
 TreeNode *FindPrarentNode(TreeNode *root, pid_t ppid) {
-  if (root == NULL)
-    return NULL;
-  if (root->procs->pid == ppid)
-    return root;
+  if (root == NULL) return NULL;
+  if (root->procs->pid == ppid) return root;
   TreeNode *node = FindPrarentNode(root->left_brother, ppid);
-  if (node != NULL)
-    return node;
+  if (node != NULL) return node;
   node = FindPrarentNode(root->right_child, ppid);
   if (node != NULL) {
     return node;
@@ -190,7 +186,13 @@ void PrintPstree(TreeNode *root) {
         printf("|      ");
       }
     }
-    printf("+------%d %s\n", root->procs->pid, root->procs->comm);
+
+    if (global_setting.show_pid) {
+      printf("+------%d %s\n", root->procs->pid, root->procs->comm);
+    } else {
+      printf("+------%s\n", root->procs->comm);
+    }
+
     PrintPstree(root->right_child);
     PrintPstree(root->left_brother);
   }
@@ -198,8 +200,7 @@ void PrintPstree(TreeNode *root) {
 
 void DestroyPstree(TreeNode *root) {
   // free the memory of pstree
-  if (root == NULL)
-    return;
+  if (root == NULL) return;
   DestroyPstree(root->left_brother);
   DestroyPstree(root->right_child);
   free(root);
@@ -208,7 +209,8 @@ void DestroyPstree(TreeNode *root) {
 /*================= SHOW FUNCIONS =====================*/
 
 void ShowVersion() {
-  printf("BRIEF-Pstree, Version-0.1, copyright@Wangqian Miao, 151242031--NJU \n");
+  printf(
+      "BRIEF-Pstree, Version-0.1, copyright@Wangqian Miao, 151242031--NJU \n");
   exit(EXIT_SUCCESS);
 }
 
@@ -231,20 +233,19 @@ int main(int argc, char *argv[]) {
 
   while (1) {
     opt = getopt_long(argc, argv, optstring, long_options, NULL);
-    if (opt == -1)
-      break;
+    if (opt == -1) break;
     switch (opt) {
-    case 'p':
-      global_setting.show_pid = 1;
-      break;
-    case 'n':
-      global_setting.numeric_sort = 1;
-      break;
-    case 'v':
-      ShowVersion();
-      break;
-    default:
-      ShowUse();
+      case 'p':
+        global_setting.show_pid = 1;
+        break;
+      case 'n':
+        global_setting.numeric_sort = 1;
+        break;
+      case 'v':
+        ShowVersion();
+        break;
+      default:
+        ShowUse();
     }
   }
 
