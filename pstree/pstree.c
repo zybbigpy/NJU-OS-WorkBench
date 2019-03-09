@@ -91,8 +91,7 @@ int OpenProcDir(const char *dir_addr) {
     while ((ptr = readdir(dir)) != NULL) {
       printf("ptr->dnam %c\n", ptr->d_name[0]);
       if (isdigit(ptr->d_name[0])) {
-        char file_addr[300];
-        sprintf(file_addr, "%s%s%s", dir_addr, ptr->d_name, "/stat");
+        char file_addr[MAX_FILE_ADDR_LEN];
         int ret = FillSysProcInfo(file_addr, &proc_index);
         if (ret) {
           perror("write sys procs array fail. \n");
