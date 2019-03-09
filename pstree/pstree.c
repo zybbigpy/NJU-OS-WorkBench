@@ -11,21 +11,22 @@
 
 #define MAX_PROC_NUM 1024
 #define MAX_FILE_ADDR_LEN 300
+#define MAX_TREE_DEPTH 20
 
 /*================= GLOBAL RELATED =====================*/
 
-// struct {
-//   int numeric_sort;
-//   int show_pid;
-// } global_setting;
+struct {
+  int numeric_sort;
+  int show_pid;
+} global_setting;
 
-// int opt;
-// static const char *optstring = "pnv";
-// static const struct option long_options[] = {
-//     {"show_pids", no_argument, NULL, 'p'},
-//     {"numeric_sort", no_argument, NULL, 'n'},
-//     {"version", no_argument, NULL, 'v'},
-//     {NULL, no_argument, NULL, 0}};
+int opt;
+static const char *optstring = "pnv";
+static const struct option long_options[] = {
+    {"show_pids", no_argument, NULL, 'p'},
+    {"numeric_sort", no_argument, NULL, 'n'},
+    {"version", no_argument, NULL, 'v'},
+    {NULL, no_argument, NULL, 0}};
 
 /*===================== BUILD PROCESS ======================*/
 
@@ -145,6 +146,7 @@ int AddChildNode(TreeNode *root, ProcInfo *instance) {
   child->procs = instance;
   child->left_brother = NULL;
   child->right_child = NULL;
+
   TreeNode *parent = FindPrarentNode(root, instance->ppid);
   if (parent) {
     if (parent->right_child == NULL) {
@@ -172,7 +174,7 @@ void BuildPstree(TreeNode *root, ProcInfo sys_porcs[]) {
   }
 }
 
-#define MAX_TREE_DEPTH 20
+
 int rec[MAX_TREE_DEPTH] = {0};
 
 void PrintPstree(TreeNode *root) {
@@ -208,10 +210,11 @@ void DestroyPstree(TreeNode *root) {
   DestroyPstree(root->right_child);
   free(root);
 }
+
 /*================= SHOW FUNCIONS =====================*/
 
 void ShowVersion() {
-  printf("pstree, it is under construction\n");
+  printf("pstree, it is v-0.1\n");
   exit(EXIT_SUCCESS);
 }
 
@@ -234,26 +237,26 @@ int main(int argc, char *argv[]) {
   root->right_child = NULL;
 
 
-  // while (1) {
-  //   opt = getopt_long(argc, argv, optstring, long_options, NULL);
-  //   if (opt == -1) {
-  //     perror("please add args!\n");
-  //     exit(EXIT_FAILURE);
-  //   }
-  //   switch (opt) {
-  //   case 'p':
-  //     global_setting.show_pid = 1;
-  //     break;
-  //   case 'n':
-  //     global_setting.numeric_sort = 1;
-  //     break;
-  //   case 'v':
-  //     ShowVersion();
-  //     break;
-  //   default:
-  //     ShowUse();
-  //   }
-  // }
+  while (1) {
+    opt = getopt_long(argc, argv, optstring, long_options, NULL);
+    if (opt == -1) {
+      perror("please add args!\n");
+      exit(EXIT_FAILURE);
+    }
+    switch (opt) {
+    case 'p':
+      global_setting.show_pid = 1;
+      break;
+    case 'n':
+      global_setting.numeric_sort = 1;
+      break;
+    case 'v':
+      ShowVersion();
+      break;
+    default:
+      ShowUse();
+    }
+  }
 
   BuildPstree(root, sys_porcs);
   // PrintPstree(root);
