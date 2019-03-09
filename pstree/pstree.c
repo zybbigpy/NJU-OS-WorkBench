@@ -42,17 +42,14 @@ typedef struct ProcInfo {
 ProcInfo sys_porcs[MAX_PROC_NUM];
 int num_procs = 0;
 
-/* the file address is always /proc/[pid]/stat. */
-int FillSysProcInfo(const char *file_addr, int *proc_index) {
+int FillSysProcInfo(
+    const char *file_addr,
+    int *proc_index) {  // the file address is always /proc/[pid]/stat
   FILE *fp = fopen(file_addr, "r");
   if (fp) {
     fscanf(fp, "%d%s%s%d%d", &sys_porcs[*proc_index].pid,
            sys_porcs[*proc_index].comm, sys_porcs[*proc_index].state,
            &sys_porcs[*proc_index].ppid, &sys_porcs[*proc_index].pgrp);
-    //  printf("process info is %d, %s, %s, %d\n", sys_porcs[*proc_index].pid,
-    //         sys_porcs[*proc_index].comm, sys_porcs[*proc_index].state,
-    //         sys_porcs[*proc_index].ppid);
-
   } else {
     perror("open file fail \n");
     exit(EXIT_FAILURE);
@@ -115,12 +112,11 @@ int OpenProcDir(const char *dir_addr) {
 
 /*===================== BUILD PSTREE ======================*/
 
-/* use right-child left-sibling binary tree */
 typedef struct TreeNode {
   ProcInfo *procs;
   struct TreeNode *left_brother;
   struct TreeNode *right_child;
-} TreeNode;
+} TreeNode;  // use right-child left-sibling binary tree
 
 TreeNode *FindPrarentNode(TreeNode *root, pid_t ppid) {
   if (root == NULL) return NULL;
@@ -135,6 +131,45 @@ TreeNode *FindPrarentNode(TreeNode *root, pid_t ppid) {
   }
 }
 
+void AddChildNodePid(TreeNode *parent, TreeNode *child) {
+  if (parent->right_child == NULL) {
+    parent->right_child = child;
+  } else {
+    TreeNode *ptr = parent->right_child;
+    while (ptr->left_brother != NULL) {
+      ptr = ptr->left_brother;
+    }
+    ptr->left_brother = child;
+  }
+}
+
+void AddChildNodeAlphbat(TreeNode *parent, TreeNode *child) {
+  if (parent->right_child == NULL) {
+    parent->right_child = child;
+  } else {
+    TreeNode *ptr = parent->right_child;
+    if (strcmp(child->procs->comm, ptr->procs->comm) < 0) {
+      parent->right_child = child;
+      child->left_brother = ptr;
+    } else {
+      while (ptr != NULL) {
+        if (ptr->left_brother == NULL) {
+          ptr->left_brother = child;
+          break;
+        }
+        if (strcmp(ptr->left_brother->procs->comm, child->procs->comm) < 0) {
+          ptr = ptr->left_brother;
+        } else {
+          TreeNode *tmp = ptr->left_brother;
+          ptr->left_brother = child;
+          child->left_brother = tmp;
+          break;
+        }
+      }
+    }
+  }
+}
+
 int AddChildNode(TreeNode *root, ProcInfo *instance) {
   TreeNode *child = (TreeNode *)malloc(sizeof(TreeNode));
   child->procs = instance;
@@ -143,14 +178,10 @@ int AddChildNode(TreeNode *root, ProcInfo *instance) {
 
   TreeNode *parent = FindPrarentNode(root, instance->ppid);
   if (parent) {
-    if (parent->right_child == NULL) {
-      parent->right_child = child;
-    } else {
-      TreeNode *ptr = parent->right_child;
-      while (ptr->left_brother != NULL) {
-        ptr = ptr->left_brother;
-      }
-      ptr->left_brother = child;
+    if (global_setting.numeric_sort) {  // sort by pid
+      AddChildNodePid(parent, child);
+    } else {  // sort by alphabet
+      AddChildNodeAlphbat(parent, child);
     }
     return 0;
   } else {
@@ -198,8 +229,7 @@ void PrintPstree(TreeNode *root) {
   }
 }
 
-void DestroyPstree(TreeNode *root) {
-  // free the memory of pstree
+void DestroyPstree(TreeNode *root) {  // free the memory of pstree
   if (root == NULL) return;
   DestroyPstree(root->left_brother);
   DestroyPstree(root->right_child);
@@ -251,5 +281,6 @@ int main(int argc, char *argv[]) {
 
   BuildPstree(root, sys_porcs);
   PrintPstree(root);
+  DestroyPstree(root);
   exit(EXIT_SUCCESS);
 }
