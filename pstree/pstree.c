@@ -221,7 +221,7 @@ void ShowUse() {
 
 int main(int argc, char *argv[]) {
   sys_porcs[0].pid = 0;
-  strcpy(sys_porcs[0].comm, "THE PSTREE ROOT");
+  strcpy(sys_porcs[0].comm, "**THE PSTREE ROOT**");
   OpenProcDir("/proc/");
 
   TreeNode *root = (TreeNode *)malloc(sizeof(TreeNode));
