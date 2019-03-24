@@ -99,9 +99,7 @@ void init_screen() {
 void splash(uint32_t color) {
   for (int x = 0; x * SIDE <= w; x++) {
     for (int y = 0; y * SIDE <= h; y++) {
-      if ((x & 1) ^ (y & 1)) {
-        draw_rect(x * SIDE, y * SIDE, SIDE, SIDE, color);  // white
-      }
+      draw_rect(x * SIDE, y * SIDE, SIDE, SIDE, color);  // white
     }
   }
 }
