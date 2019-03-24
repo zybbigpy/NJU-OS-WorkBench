@@ -24,7 +24,6 @@ void read_key() {
   if (event.keycode != _KEY_NONE && event.keydown) {
     if (event.keycode == _KEY_UP) {
       splash(0xffffffff);
-      _ioe_init();
     }
     puts("Key pressed: ");
     puts(key_names[event.keycode]);
