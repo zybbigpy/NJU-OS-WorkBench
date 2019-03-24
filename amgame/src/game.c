@@ -23,7 +23,8 @@ void read_key() {
   _io_read(_DEV_INPUT, _DEVREG_INPUT_KBD, &event, sizeof(event));
   if (event.keycode != _KEY_NONE && event.keydown) {
     if (event.keycode == _KEY_UP) {
-      splash();
+      splash(0xffffffff);
+      _ioe_init();
     }
     puts("Key pressed: ");
     puts(key_names[event.keycode]);
@@ -56,11 +57,11 @@ void draw_rect(int x, int y, int w, int h, uint32_t color) {
   _io_write(_DEV_VIDEO, _DEVREG_VIDEO_FBCTL, &event, sizeof(event));
 }
 
-void splash() {
+void splash(uint32_t color) {
   for (int x = 0; x * SIDE <= w; x++) {
     for (int y = 0; y * SIDE <= h; y++) {
       if ((x & 1) ^ (y & 1)) {
-        draw_rect(x * SIDE, y * SIDE, SIDE, SIDE, 0xffffff);  // white
+        draw_rect(x * SIDE, y * SIDE, SIDE, SIDE, color);  // white
       }
     }
   }
