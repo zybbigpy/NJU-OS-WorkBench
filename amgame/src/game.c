@@ -26,7 +26,7 @@ void draw_rect(int x, int y, int w, int h, uint32_t color) {
 }
 
 void show_main_rect(uint32_t color) {
-  draw_rect(main_rect_x * SIDE, main_rect_y * SIDE, SIDE, SIDE, color);
+  draw_rect(5 * SIDE, 6 * SIDE, SIDE, SIDE, color);
 }
 
 int main() {
@@ -50,7 +50,8 @@ void read_key() {
     if (event.keycode == _KEY_UP) {
       // splash(0xffffffff);
       // show_main_rect(0xffffffff);
-      draw_rect(5 * SIDE, 6 * SIDE, SIDE, SIDE, 0xffffffff);
+      // draw_rect(5 * SIDE, 6 * SIDE, SIDE, SIDE, 0xffffffff);
+      show_main_rect(0xffffff);
     }
     if (event.keycode == _KEY_DOWN) {
       splash(0);
