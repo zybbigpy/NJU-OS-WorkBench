@@ -6,8 +6,8 @@ void read_key();
 
 int main_rect_x = 10;
 int main_rect_y = 10;
-int dx = 5;
-int dy = 5;
+int dx = 1;
+int dy = 1;
 
 void draw_rect(int x, int y, int w, int h, uint32_t color) {
   uint32_t pixels[w * h];  // WARNING: allocated on stack
@@ -55,7 +55,7 @@ void read_key() {
     // }
     switch (event.keycode) {
       case _KEY_UP:
-        main_rect_y += dx;
+        main_rect_y += dy;
         show_main_rect(0xffffffff);
         break;
       case _KEY_DOWN:
