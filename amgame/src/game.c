@@ -16,12 +16,9 @@ int main() {
 }
 
 void read_key() {
-  _DEV_INPUT_KBD_t event = { .keycode = _KEY_NONE };
-  #define KEYNAME(key) \
-    [_KEY_##key] = #key,
-  static const char *key_names[] = {
-    _KEYS(KEYNAME)
-  };
+  _DEV_INPUT_KBD_t event = {.keycode = _KEY_NONE};
+#define KEYNAME(key) [_KEY_##key] = #key,
+  static const char *key_names[] = {_KEYS(KEYNAME)};
   _io_read(_DEV_INPUT, _DEVREG_INPUT_KBD, &event, sizeof(event));
   if (event.keycode != _KEY_NONE && event.keydown) {
     puts("Key pressed: ");
@@ -40,10 +37,14 @@ void init_screen() {
 }
 
 void draw_rect(int x, int y, int w, int h, uint32_t color) {
-  uint32_t pixels[w * h]; // WARNING: allocated on stack
+  uint32_t pixels[w * h];  // WARNING: allocated on stack
   _DEV_VIDEO_FBCTL_t event = {
-    .x = x, .y = y, .w = w, .h = h, .sync = 1,
-    .pixels = pixels,
+      .x = x,
+      .y = y,
+      .w = w,
+      .h = h,
+      .sync = 1,
+      .pixels = pixels,
   };
   for (int i = 0; i < w * h; i++) {
     pixels[i] = color;
@@ -52,10 +53,10 @@ void draw_rect(int x, int y, int w, int h, uint32_t color) {
 }
 
 void splash() {
-  for (int x = 0; x * SIDE <= w; x ++) {
+  for (int x = 0; x * SIDE <= w; x++) {
     for (int y = 0; y * SIDE <= h; y++) {
       if ((x & 1) ^ (y & 1)) {
-        draw_rect(x * SIDE, y * SIDE, SIDE, SIDE, 0xffffff); // white
+        draw_rect(x * SIDE, y * SIDE, SIDE, SIDE, 0xffffff);  // white
       }
     }
   }
