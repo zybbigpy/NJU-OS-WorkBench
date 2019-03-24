@@ -25,6 +25,9 @@ void read_key() {
     if (event.keycode == _KEY_UP) {
       splash(0xffffffff);
     }
+    if (event.keycode == _KEY_DOWN) {
+      splash(0xaaaaaaaa);
+    }
     puts("Key pressed: ");
     puts(key_names[event.keycode]);
     puts("\n");
