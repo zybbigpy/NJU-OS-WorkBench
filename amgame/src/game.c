@@ -36,7 +36,7 @@ int main() {
   // splash();
   while (1) {
     read_key();
-    // splash();
+    splash(0);
   }
   return 0;
 }
