@@ -50,10 +50,8 @@ void read_key() {
   if (event.keycode != _KEY_NONE && event.keydown) {
     if (event.keycode == _KEY_UP) {
       // splash(0xffffffff);
-      // show_main_rect(0xffffffff);
-      // draw_rect(5 * SIDE, 6 * SIDE, SIDE, SIDE, 0xffffffff);
+      main_rect_y += dy;
       show_main_rect(0xffffff);
-      splash(0);
     }
     if (event.keycode == _KEY_DOWN) {
       splash(0);
