@@ -55,11 +55,11 @@ void read_key() {
     // }
     switch (event.keycode) {
       case _KEY_UP:
-        main_rect_y += dy;
+        main_rect_y -= dy;
         show_main_rect(0xffffffff);
         break;
       case _KEY_DOWN:
-        main_rect_y -= dy;
+        main_rect_y += dy;
         show_main_rect(0xffffffff);
         break;
       case _KEY_LEFT:
