@@ -56,18 +56,22 @@ void read_key() {
     switch (event.keycode) {
       case _KEY_UP:
         main_rect_y -= dy;
+        splash(0);
         show_main_rect(0xffffffff);
         break;
       case _KEY_DOWN:
         main_rect_y += dy;
+        splash(0);
         show_main_rect(0xffffffff);
         break;
       case _KEY_LEFT:
         main_rect_x -= dx;
+        splash(0);
         show_main_rect(0xffffffff);
         break;
       case _KEY_RIGHT:
         main_rect_x += dx;
+        splash(0);
         show_main_rect(0xffffffff);
         break;
       default:
@@ -89,12 +93,12 @@ void init_screen() {
   h = info.height;
 }
 
-// void splash(uint32_t color) {
-//   for (int x = 0; x * SIDE <= w; x++) {
-//     for (int y = 0; y * SIDE <= h; y++) {
-//       if ((x & 1) ^ (y & 1)) {
-//         draw_rect(x * SIDE, y * SIDE, SIDE, SIDE, color);  // white
-//       }
-//     }
-//   }
-// }
+void splash(uint32_t color) {
+  for (int x = 0; x * SIDE <= w; x++) {
+    for (int y = 0; y * SIDE <= h; y++) {
+      if ((x & 1) ^ (y & 1)) {
+        draw_rect(x * SIDE, y * SIDE, SIDE, SIDE, color);  // white
+      }
+    }
+  }
+}
