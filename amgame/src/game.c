@@ -48,8 +48,8 @@ void read_key() {
   _io_read(_DEV_INPUT, _DEVREG_INPUT_KBD, &event, sizeof(event));
   if (event.keycode != _KEY_NONE && event.keydown) {
     if (event.keycode == _KEY_UP) {
-      splash(0xffffffff);
-      // show_main_rect(0xffffffff);
+      // splash(0xffffffff);
+      show_main_rect(0xffffffff);
     }
     if (event.keycode == _KEY_DOWN) {
       splash(0);
