@@ -4,8 +4,8 @@ void init_screen();
 void splash();
 void read_key();
 
-int main_rect_x = 0;
-int main_rect_y = 0;
+int main_rect_x = 10;
+int main_rect_y = 10;
 int dx = 5;
 int dy = 5;
 
@@ -56,20 +56,24 @@ void read_key() {
     switch (event.keycode) {
       case _KEY_UP:
         main_rect_y += dx;
+        show_main_rect(0xffffffff);
         break;
       case _KEY_DOWN:
         main_rect_y -= dy;
+        show_main_rect(0xffffffff);
         break;
       case _KEY_LEFT:
         main_rect_x -= dx;
+        show_main_rect(0xffffffff);
         break;
       case _KEY_RIGHT:
         main_rect_x += dx;
+        show_main_rect(0xffffffff);
         break;
       default:
         break;
     }
-    show_main_rect(0xffffffff);
+
     puts("Key pressed: ");
     puts(key_names[event.keycode]);
     puts("\n");
