@@ -4,8 +4,6 @@ void init_screen();
 void splash();
 void read_key();
 
-int main_rect_x = 10;
-int main_rect_y = 10;
 int dx = 1;
 int dy = 1;
 
@@ -25,8 +23,11 @@ void draw_rect(int x, int y, int w, int h, uint32_t color) {
   _io_write(_DEV_VIDEO, _DEVREG_VIDEO_FBCTL, &event, sizeof(event));
 }
 
+int main_rect_x = 5;
+int main_rect_y = 6;
+
 void show_main_rect(uint32_t color) {
-  draw_rect(5 * SIDE, 6 * SIDE, SIDE, SIDE, color);
+  draw_rect(main_rect_x * SIDE, main_rect_y * SIDE, SIDE, SIDE, color);
 }
 
 int main() {
