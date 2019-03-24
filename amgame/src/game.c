@@ -48,38 +48,38 @@ void read_key() {
   static const char *key_names[] = {_KEYS(KEYNAME)};
   _io_read(_DEV_INPUT, _DEVREG_INPUT_KBD, &event, sizeof(event));
   if (event.keycode != _KEY_NONE && event.keydown) {
-    if (event.keycode == _KEY_UP) {
-      // splash(0xffffffff);
-      main_rect_y += dy;
-      show_main_rect(0xffffff);
-    }
-    if (event.keycode == _KEY_DOWN) {
-      splash(0);
-    }
-    // switch (event.keycode) {
-    //   case _KEY_UP:
-    //     main_rect_y -= dy;
-    //     splash(0);
-    //     show_main_rect(0xffffffff);
-    //     break;
-    //   case _KEY_DOWN:
-    //     main_rect_y += dy;
-    //     splash(0);
-    //     show_main_rect(0xffffffff);
-    //     break;
-    //   case _KEY_LEFT:
-    //     main_rect_x -= dx;
-    //     splash(0);
-    //     show_main_rect(0xffffffff);
-    //     break;
-    //   case _KEY_RIGHT:
-    //     main_rect_x += dx;
-    //     splash(0);
-    //     show_main_rect(0xffffffff);
-    //     break;
-    //   default:
-    //     break;
+    // if (event.keycode == _KEY_UP) {
+    //   // splash(0xffffffff);
+    //   main_rect_y += dy;
+    //   show_main_rect(0xffffff);
     // }
+    // if (event.keycode == _KEY_DOWN) {
+    //   splash(0);
+    // }
+    switch (event.keycode) {
+      case _KEY_UP:
+        main_rect_y -= dy;
+        splash(0);
+        show_main_rect(0xffffffff);
+        break;
+      case _KEY_DOWN:
+        main_rect_y += dy;
+        splash(0);
+        show_main_rect(0xffffffff);
+        break;
+      case _KEY_LEFT:
+        main_rect_x -= dx;
+        splash(0);
+        show_main_rect(0xffffffff);
+        break;
+      case _KEY_RIGHT:
+        main_rect_x += dx;
+        splash(0);
+        show_main_rect(0xffffffff);
+        break;
+      default:
+        break;
+    }
 
     puts("Key pressed: ");
     puts(key_names[event.keycode]);
