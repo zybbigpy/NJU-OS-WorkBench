@@ -1,13 +1,6 @@
 #include <game.h>
 
-void init_screen();
-void splash();
-void read_key();
-
-int dx = 1;
-int dy = 1;
-
-void draw_rect(int x, int y, int w, int h, uint32_t color) {
+void draw_rect_(int x, int y, int w, int h, uint32_t color) {
   uint32_t pixels[w * h];  // WARNING: allocated on stack
   _DEV_VIDEO_FBCTL_t event = {
       .x = x,
@@ -24,20 +17,29 @@ void draw_rect(int x, int y, int w, int h, uint32_t color) {
 }
 
 void show_main_rect(uint32_t color) {
-  draw_rect(main_rect_x * SIDE, main_rect_y * SIDE, SIDE, SIDE, color);
+  draw_rect_(main_rect_x * SIDE, main_rect_y * SIDE, SIDE, SIDE, color);
+}
+
+void generate_beans() {
+  for (int i = 0; i < BEAN_NUM; ++i) {
+    beans[i].x = rand() % w;
+    beans[i].y = rand() % h;
+    beans[i].status = true;
+  }
 }
 
 int main() {
   // Operating system is a C program
   _ioe_init();
   init_screen();
+  generate_beans();
   while (1) {
     read_key();
   }
   return 0;
 }
 
-void read_key() {
+void read_key_play() {
   _DEV_INPUT_KBD_t event = {.keycode = _KEY_NONE};
 #define KEYNAME(key) [_KEY_##key] = #key,
   static const char *key_names[] = {_KEYS(KEYNAME)};
@@ -74,8 +76,6 @@ void read_key() {
   }
 }
 
-int w, h;
-
 void init_screen() {
   _DEV_VIDEO_INFO_t info = {0};
   _io_read(_DEV_VIDEO, _DEVREG_VIDEO_INFO, &info, sizeof(info));
@@ -86,7 +86,7 @@ void init_screen() {
 void splash(uint32_t color) {
   for (int x = 0; x * SIDE <= w; x++) {
     for (int y = 0; y * SIDE <= h; y++) {
-      draw_rect(x * SIDE, y * SIDE, SIDE, SIDE, color);  // white
+      draw_rect_(x * SIDE, y * SIDE, SIDE, SIDE, color);  // white
     }
   }
 }
