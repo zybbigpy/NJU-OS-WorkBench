@@ -58,8 +58,8 @@ int main() {
   init_screen();
   generate_beans();
   while (1) {
-    // read_key_play();
-    draw_picture();
+    read_key_play();
+    // draw_picture();
   }
   return 0;
 }
