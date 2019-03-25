@@ -23,9 +23,6 @@ void draw_rect(int x, int y, int w, int h, uint32_t color) {
   _io_write(_DEV_VIDEO, _DEVREG_VIDEO_FBCTL, &event, sizeof(event));
 }
 
-int main_rect_x = 5;
-int main_rect_y = 6;
-
 void show_main_rect(uint32_t color) {
   draw_rect(main_rect_x * SIDE, main_rect_y * SIDE, SIDE, SIDE, color);
 }
@@ -34,10 +31,8 @@ int main() {
   // Operating system is a C program
   _ioe_init();
   init_screen();
-  // splash();
   while (1) {
     read_key();
-    // splash(0);
   }
   return 0;
 }
@@ -48,14 +43,6 @@ void read_key() {
   static const char *key_names[] = {_KEYS(KEYNAME)};
   _io_read(_DEV_INPUT, _DEVREG_INPUT_KBD, &event, sizeof(event));
   if (event.keycode != _KEY_NONE && event.keydown) {
-    // if (event.keycode == _KEY_UP) {
-    //   // splash(0xffffffff);
-    //   main_rect_y += dy;
-    //   show_main_rect(0xffffff);
-    // }
-    // if (event.keycode == _KEY_DOWN) {
-    //   splash(0);
-    // }
     switch (event.keycode) {
       case _KEY_UP:
         main_rect_y -= dy;
