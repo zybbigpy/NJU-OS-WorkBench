@@ -34,7 +34,7 @@ int main() {
   init_screen();
   generate_beans();
   while (1) {
-    read_key();
+    read_key_play();
   }
   return 0;
 }
