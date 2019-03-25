@@ -22,8 +22,8 @@ void show_main_rect(uint32_t color) {
 
 void generate_beans() {
   for (int i = 0; i < BEAN_NUM; ++i) {
-    beans[i].x = rand() % 35;
-    beans[i].y = rand() % 35;
+    beans[i].x = rand() % 30;
+    beans[i].y = rand() % 30;
     beans[i].status = true;
   }
 }
