@@ -31,7 +31,7 @@ void generate_beans() {
 void draw_picture() {
   for (int i = 0; i < BEAN_NUM; ++i) {
     if (beans[i].status == true) {
-      draw_rect_(beans[i].x * SIDE, beans[i].y * SIDE, SIDE, SIDE, 0xffffff);
+      draw_rect_(beans[i].x * SIDE, beans[i].y * SIDE, SIDE, SIDE, 0xffaaff);
     }
   }
   show_main_rect(0xffffff);
