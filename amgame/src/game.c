@@ -59,7 +59,7 @@ int main() {
   generate_beans();
   while (1) {
     // read_key_play();
-    show_main_rect(0xffffff);
+    draw_picture();
   }
   return 0;
 }
