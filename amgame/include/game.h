@@ -21,7 +21,7 @@ int main_rect_y = 6;
 int dx = 1;
 int dy = 1;
 
-static inline void puts(const char *s) {
+static inline void puts_(const char *s) {
   for (; *s; s++) _putc(*s);
 }
 

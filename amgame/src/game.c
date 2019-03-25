@@ -1,4 +1,5 @@
 #include <game.h>
+#include <stdio.h>
 
 void draw_rect_(int x, int y, int w, int h, uint32_t color) {
   uint32_t pixels[w * h];  // WARNING: allocated on stack
@@ -23,6 +24,7 @@ void show_main_rect(uint32_t color) {
 void generate_beans() {
   for (int i = 0; i < BEAN_NUM; ++i) {
     beans[i].x = rand() % (w / 8 - 2) * 8 + 8;
+    printf("x= %d\n", beans[i].x);
     beans[i].y = 10;
     beans[i].status = true;
   }
@@ -95,9 +97,9 @@ void read_key_play() {
         break;
     }
     up_date_screen();
-    puts("Key pressed: ");
-    puts(key_names[event.keycode]);
-    puts("\n");
+    puts_("Key pressed: ");
+    puts_(key_names[event.keycode]);
+    puts_("\n");
   }
 }
 
