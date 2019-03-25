@@ -57,10 +57,10 @@ int main() {
   _ioe_init();
   init_screen();
   generate_beans();
-  draw_picture();
-  // while (1) {
-  //   read_key_play();
-  // }
+  while (1) {
+    // read_key_play();
+    show_main_rect(0xffffff);
+  }
   return 0;
 }
 
