@@ -30,3 +30,5 @@ void generate_beans();
 void init_screen();
 void splash();
 void read_key_play();
+void draw_picture();
+void update_beans_status();

@@ -28,6 +28,30 @@ void generate_beans() {
   }
 }
 
+void draw_picture() {
+  for (int i = 0; i < BEAN_NUM; ++i) {
+    if (beans[i].status == true) {
+      draw_rect_(beans[i].x * SIDE, beans[i].y * SIDE, SIDE, SIDE, 0xffffff);
+    }
+  }
+  show_main_rect(0xffffff);
+}
+
+void update_beans_status() {
+  for (int i = 0; i < BEAN_NUM; ++i) {
+    if (beans[i].status == true && beans[i].x == main_rect_x &&
+        beans[i].y == main_rect_y) {
+      beans[i].status = false;
+    }
+  }
+}
+
+void up_date_screen() {
+  splash(0);
+  draw_picture();
+  update_beans_status();
+}
+
 int main() {
   // Operating system is a C program
   _ioe_init();
@@ -48,28 +72,28 @@ void read_key_play() {
     switch (event.keycode) {
       case _KEY_UP:
         main_rect_y -= dy;
-        splash(0);
-        show_main_rect(0xffffffff);
+        // splash(0);
+        // show_main_rect(0xffffffff);
         break;
       case _KEY_DOWN:
         main_rect_y += dy;
-        splash(0);
-        show_main_rect(0xffffffff);
+        // splash(0);
+        // show_main_rect(0xffffffff);
         break;
       case _KEY_LEFT:
         main_rect_x -= dx;
-        splash(0);
-        show_main_rect(0xffffffff);
+        // splash(0);
+        // show_main_rect(0xffffffff);
         break;
       case _KEY_RIGHT:
         main_rect_x += dx;
-        splash(0);
-        show_main_rect(0xffffffff);
+        // splash(0);
+        // show_main_rect(0xffffffff);
         break;
       default:
         break;
     }
-
+    up_date_screen();
     puts("Key pressed: ");
     puts(key_names[event.keycode]);
     puts("\n");
