@@ -7,8 +7,7 @@
 #define false 0
 #define BEAN_NUM 10
 
-// the beasns
-
+// the beans
 typedef struct bean {
   int x;
   int y;
@@ -18,16 +17,18 @@ typedef struct bean {
 Bean beans[BEAN_NUM];
 int num_beans_left = BEAN_NUM;
 
-// your cordinate
+// your cordinate at the beginning
 int main_rect_x = 5;
 int main_rect_y = 6;
 
-// every step you move
+// every step size you will move
 int dx = 1;
 int dy = 1;
 
-// change your color
-uint32_t color_array[] = {0xffffff, 0xffccff, 0xbbffff, 0xeeaaff};
+// change your color after you ate a bean
+#define COLOR_NUM 6
+uint32_t color_array[] = {0xC0FF3E, 0x8B008B, 0xFFB5C5,
+                          0xEE3A8C, 0xCDB5CD, 0xB3EE3A};
 uint32_t color_now = 0xffffff;
 
 // screen size

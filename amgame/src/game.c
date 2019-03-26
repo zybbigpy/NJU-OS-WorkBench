@@ -20,7 +20,8 @@ void draw_rect_(int x, int y, int w, int h, uint32_t color) {
 
 void draw_main_rect() {
   if (change_color_flag) {
-    color_now = color_array[rand() % 4];
+    srand(6);
+    color_now = color_array[rand() % COLOR_NUM];
     change_color_flag = false;
   }
   draw_rect_(main_rect_x * SIDE, main_rect_y * SIDE, SIDE, SIDE, color_now);
@@ -39,7 +40,7 @@ void draw_picture() {
   for (int i = 0; i < BEAN_NUM; ++i) {
     if (beans[i].status == true) {
       draw_rect_(beans[i].x * SIDE, beans[i].y * SIDE, SIDE, SIDE,
-                 0xffaaff);  // pink beans
+                 0xFFFF00);  // yellow beans
     }
   }
   draw_main_rect();
