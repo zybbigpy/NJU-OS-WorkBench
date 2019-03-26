@@ -1,5 +1,7 @@
 #include <game.h>
 
+int change_color_flag = false;
+
 void draw_rect_(int x, int y, int w, int h, uint32_t color) {
   uint32_t pixels[w * h];  // WARNING: allocated on stack
   _DEV_VIDEO_FBCTL_t event = {
@@ -16,8 +18,13 @@ void draw_rect_(int x, int y, int w, int h, uint32_t color) {
   _io_write(_DEV_VIDEO, _DEVREG_VIDEO_FBCTL, &event, sizeof(event));
 }
 
-void show_main_rect(uint32_t color) {
-  draw_rect_(main_rect_x * SIDE, main_rect_y * SIDE, SIDE, SIDE, color);
+uint32_t color_now = 0xffffff;
+void show_main_rect() {
+  if (change_color_flag) {
+    color_now = color_array[rand() % 4];
+    change_color_flag = false;
+  }
+  draw_rect_(main_rect_x * SIDE, main_rect_y * SIDE, SIDE, SIDE, color_now);
 }
 
 void generate_beans() {
@@ -32,10 +39,11 @@ void generate_beans() {
 void draw_picture() {
   for (int i = 0; i < BEAN_NUM; ++i) {
     if (beans[i].status == true) {
-      draw_rect_(beans[i].x * SIDE, beans[i].y * SIDE, SIDE, SIDE, 0xffaaff);
+      draw_rect_(beans[i].x * SIDE, beans[i].y * SIDE, SIDE, SIDE,
+                 0xffaaff);  // pink beans
     }
   }
-  show_main_rect(0xffffff);
+  show_main_rect();
 }
 
 void update_beans_status() {
@@ -43,25 +51,16 @@ void update_beans_status() {
     if (beans[i].status == true && beans[i].x == main_rect_x &&
         beans[i].y == main_rect_y) {
       beans[i].status = false;
+      num_beans_left--;
+      change_color_flag = true;
     }
   }
 }
 
-void up_date_screen() {
+void update_screen() {
   splash(0);
   draw_picture();
   update_beans_status();
-}
-
-int main() {
-  // Operating system is a C program
-  _ioe_init();
-  init_screen();
-  generate_beans();
-  while (1) {
-    read_key_play();
-  }
-  return 0;
 }
 
 void read_key_play() {
@@ -86,7 +85,7 @@ void read_key_play() {
       default:
         break;
     }
-    up_date_screen();
+    update_screen();
     puts_("Key pressed: ");
     puts_(key_names[event.keycode]);
     puts_("\n");
@@ -106,4 +105,15 @@ void splash(uint32_t color) {
       draw_rect_(x * SIDE, y * SIDE, SIDE, SIDE, color);  // white
     }
   }
+}
+
+int main() {
+  // Operating system is a C program
+  _ioe_init();
+  init_screen();
+  generate_beans();
+  while (1) {
+    read_key_play();
+  }
+  return 0;
 }

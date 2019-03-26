@@ -25,7 +25,9 @@ static inline void puts_(const char *s) {
   for (; *s; s++) _putc(*s);
 }
 
+uint32_t color_array[] = {0xffffff, 0xffccff, 0xbbffff, 0xeeaaff};
 int w, h;
+int num_beans_left = BEAN_NUM;
 void generate_beans();
 void init_screen();
 void splash();
