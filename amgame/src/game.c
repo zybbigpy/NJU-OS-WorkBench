@@ -18,8 +18,7 @@ void draw_rect_(int x, int y, int w, int h, uint32_t color) {
   _io_write(_DEV_VIDEO, _DEVREG_VIDEO_FBCTL, &event, sizeof(event));
 }
 
-uint32_t color_now = 0xffffff;
-void show_main_rect() {
+void draw_main_rect() {
   if (change_color_flag) {
     color_now = color_array[rand() % 4];
     change_color_flag = false;
@@ -43,7 +42,7 @@ void draw_picture() {
                  0xffaaff);  // pink beans
     }
   }
-  show_main_rect();
+  draw_main_rect();
 }
 
 void update_beans_status() {
@@ -52,13 +51,14 @@ void update_beans_status() {
         beans[i].y == main_rect_y) {
       beans[i].status = false;
       num_beans_left--;
-      change_color_flag = true;
+      change_color_flag =
+          true;  // after you eat a bean, your color will change :)
     }
   }
 }
 
 void update_screen() {
-  splash(0);
+  clear();
   draw_picture();
   update_beans_status();
 }
@@ -99,10 +99,10 @@ void init_screen() {
   h = info.height;
 }
 
-void splash(uint32_t color) {
+void clear(uint32_t color) {
   for (int x = 0; x * SIDE <= w; x++) {
     for (int y = 0; y * SIDE <= h; y++) {
-      draw_rect_(x * SIDE, y * SIDE, SIDE, SIDE, color);  // white
+      draw_rect_(x * SIDE, y * SIDE, SIDE, SIDE, 0);  // clear the whole screen
     }
   }
 }
