@@ -37,11 +37,12 @@ int w, h;
 // game related functions
 void generate_beans();
 void init_screen();
-void clear();
+void clear_screen();
 void read_key_play();
 void draw_picture();
 void update_beans_status();
 void draw_main_rect();
+int get_sencond_now();
 
 static inline void puts_(const char *s) {
   for (; *s; s++) _putc(*s);

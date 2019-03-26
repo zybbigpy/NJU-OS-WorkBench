@@ -67,7 +67,7 @@ void update_beans_status() {
 }
 
 void update_screen() {
-  clear();
+  clear_screen();
   draw_picture();
   update_beans_status();
 }
@@ -108,7 +108,7 @@ void init_screen() {
   h = info.height;
 }
 
-void clear(uint32_t color) {
+void clear_screen(uint32_t color) {
   for (int x = 0; x * SIDE <= w; x++) {
     for (int y = 0; y * SIDE <= h; y++) {
       draw_rect_(x * SIDE, y * SIDE, SIDE, SIDE, 0);  // clear the whole screen
