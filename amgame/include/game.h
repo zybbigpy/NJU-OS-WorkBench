@@ -5,7 +5,7 @@
 #define SIDE 16
 #define true 1
 #define false 0
-#define BEAN_NUM 5
+#define BEAN_NUM 10
 
 typedef struct bean {
   int x;

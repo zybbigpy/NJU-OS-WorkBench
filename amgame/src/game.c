@@ -21,6 +21,7 @@ void show_main_rect(uint32_t color) {
 }
 
 void generate_beans() {
+  srand(10);
   for (int i = 0; i < BEAN_NUM; ++i) {
     beans[i].x = rand() % 30;
     beans[i].y = rand() % 30;
@@ -59,7 +60,6 @@ int main() {
   generate_beans();
   while (1) {
     read_key_play();
-    // draw_picture();
   }
   return 0;
 }
@@ -73,23 +73,15 @@ void read_key_play() {
     switch (event.keycode) {
       case _KEY_UP:
         main_rect_y -= dy;
-        // splash(0);
-        // show_main_rect(0xffffffff);
         break;
       case _KEY_DOWN:
         main_rect_y += dy;
-        // splash(0);
-        // show_main_rect(0xffffffff);
         break;
       case _KEY_LEFT:
         main_rect_x -= dx;
-        // splash(0);
-        // show_main_rect(0xffffffff);
         break;
       case _KEY_RIGHT:
         main_rect_x += dx;
-        // splash(0);
-        // show_main_rect(0xffffffff);
         break;
       default:
         break;
