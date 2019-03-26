@@ -18,9 +18,16 @@ void draw_rect_(int x, int y, int w, int h, uint32_t color) {
   _io_write(_DEV_VIDEO, _DEVREG_VIDEO_FBCTL, &event, sizeof(event));
 }
 
+int get_sencond_now() {
+  _DEV_TIMER_DATE_t date;
+  _io_read(_DEV_TIMER, _DEVREG_TIMER_DATE, &date, sizeof(date));
+  return date.second;
+}
+
 void draw_main_rect() {
   if (change_color_flag) {
-    srand(7);
+    unsigned int seed = get_sencond_now();
+    srand(seed);
     color_now = color_array[rand() % COLOR_NUM];
     change_color_flag = false;
   }
@@ -28,7 +35,8 @@ void draw_main_rect() {
 }
 
 void generate_beans() {
-  srand(10);
+  unsigned int seed = get_sencond_now();
+  srand(seed);
   for (int i = 0; i < BEAN_NUM; ++i) {
     beans[i].x = rand() % 30;
     beans[i].y = rand() % 30;
