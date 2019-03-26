@@ -20,7 +20,7 @@ void draw_rect_(int x, int y, int w, int h, uint32_t color) {
 
 void draw_main_rect() {
   if (change_color_flag) {
-    srand(6);
+    srand(7);
     color_now = color_array[rand() % COLOR_NUM];
     change_color_flag = false;
   }
