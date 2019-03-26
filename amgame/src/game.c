@@ -113,7 +113,12 @@ int main() {
   init_screen();
   generate_beans();
   while (1) {
-    read_key_play();
+    if (num_beans_left > 0) {
+      read_key_play();
+    } else {
+      break;
+    }
   }
+  puts_("GAME completed, you ate all beans!");
   return 0;
 }
