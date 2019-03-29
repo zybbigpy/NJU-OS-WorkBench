@@ -118,16 +118,20 @@ void clear_screen(uint32_t color) {
 
 int main() {
   // Operating system is a C program
-  _ioe_init();
-  init_screen();
-  generate_beans();
-  while (1) {
-    if (num_beans_left > 0) {
-      read_key_play();
-    } else {
-      break;
-    }
-  }
-  puts_("GAME completed, you ate all beans!");
+  // _ioe_init();
+  // init_screen();
+  // generate_beans();
+  // while (1) {
+  //   if (num_beans_left > 0) {
+  //     read_key_play();
+  //   } else {
+  //     break;
+  //   }
+  // }
+  // puts_("GAME completed, you ate all beans!");
+  printf("hello,world\n");
+  int a = 15;
+  printf("a is %d", a);
+  printf("a is 0x%x", a);
   return 0;
 }
