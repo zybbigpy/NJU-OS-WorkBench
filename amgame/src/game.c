@@ -129,7 +129,8 @@ int main() {
   //   }
   // }
   // puts_("GAME completed, you ate all beans!");
-  printf("hello,world\n");
+  int size = printf("hello,world\n");
+  printf("the size should be 12, and the result is %d",size);
   int a = 15;
   printf("a is %d\n", a);
   printf("a is 0x%x\n", a);
