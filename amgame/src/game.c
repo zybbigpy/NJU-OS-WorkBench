@@ -117,23 +117,23 @@ void clear_screen(uint32_t color) {
 }
 
 int main() {
-  // Operating system is a C program
-  // _ioe_init();
-  // init_screen();
-  // generate_beans();
-  // while (1) {
-  //   if (num_beans_left > 0) {
-  //     read_key_play();
-  //   } else {
-  //     break;
-  //   }
-  // }
-  // puts_("GAME completed, you ate all beans!");
-  int size = printf("hello,world\n");
-  printf("the size should be 12, and the result is %d",size);
-  int a = 15;
-  printf("a is %d\n", a);
-  printf("a is 0x%x\n", a);
-  printf("the string is %s and the a is %d \n", "dfasdf", a);
+  Operating system is a C program
+  _ioe_init();
+  init_screen();
+  generate_beans();
+  while (1) {
+    if (num_beans_left > 0) {
+      read_key_play();
+    } else {
+      break;
+    }
+  }
+  puts_("GAME completed, you ate all beans!");
+  // int size = printf("hello,world\n");
+  // printf("the size should be 12, and the result is %d",size);
+  // int a = 15;
+  // printf("a is %d\n", a);
+  // printf("a is 0x%x\n", a);
+  // printf("the string is %s and the a is %d \n", "dfasdf", a);
   return 0;
 }
