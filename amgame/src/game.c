@@ -131,7 +131,8 @@ int main() {
   // puts_("GAME completed, you ate all beans!");
   printf("hello,world\n");
   int a = 15;
-  printf("a is %d", a);
-  printf("a is 0x%x", a);
+  printf("a is %d\n", a);
+  printf("a is 0x%x\n", a);
+  printf("the string is %s and the a is %d \n", "dfasdf", a);
   return 0;
 }
