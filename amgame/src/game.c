@@ -117,7 +117,7 @@ void clear_screen(uint32_t color) {
 }
 
 int main() {
-  Operating system is a C program
+  // Operating system is a C program
   _ioe_init();
   init_screen();
   generate_beans();
