@@ -52,11 +52,11 @@ void co_init()
   current = NULL;
 }
 
-static void start_co()
-{
-  current->func(current->args);
-  longjmp(main_ctx, END);
-}
+// static void start_co()
+// {
+//   current->func(current->args);
+//   longjmp(main_ctx, END);
+// }
 
 struct co *co_start(const char *name, func_t func, void *arg)
 {
@@ -101,10 +101,10 @@ struct co *co_start(const char *name, func_t func, void *arg)
     // asm volatile("mov " PC ", %0; mov %1, " SP
     //              : "=g"(co->__pc_backup)
     //              : "g"((void *)start_co));
-    // func(arg);
-     start_co();
+    func(arg);
+    // start_co();
     // asm volatile("mov %0," SP : : "g"(co->__stack_backup));
-    // longjmp(main_ctx, END);
+     longjmp(main_ctx, END);
   }
   return co;
 }
