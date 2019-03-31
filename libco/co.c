@@ -69,15 +69,15 @@ struct co *co_start(const char *name, func_t func, void *arg) {
   coroutins = co;
 
   if (setjmp(co->ctx)) {
-    if (flag == 1) {
-      asm volatile("mov " SP ", %0; mov %1, " SP
-                   : "=g"(__stack_backup)
-                   : "g"(co->stack + STACK_SIZE));
-      flag = 0;
-    } else {
-     asm volatile("mov %0," SP : : "g"(co->stack + STACK_SIZE));
-    }
-
+    // if (flag == 1) {
+    //   asm volatile("mov " SP ", %0; mov %1, " SP
+    //                : "=g"(__stack_backup)
+    //                : "g"(co->stack + STACK_SIZE));
+    //   flag = 0;
+    // } else {
+    //  asm volatile("mov %0," SP : : "g"(co->stack + STACK_SIZE));
+    // }
+    asm volatile("mov %0," SP : : "g"(co->stack + STACK_SIZE));
     func(arg);
     longjmp(main_ctx, END);
   }
@@ -107,7 +107,7 @@ void co_wait(struct co *thd) {
       if (co_->next == co_) {
         coroutins = NULL;
         co_destroy(co_);
-        asm volatile("mov %0," SP : : "g"(__stack_backup));
+        // asm volatile("mov %0," SP : : "g"(__stack_backup));
         return;
       }
       current = current->next;
