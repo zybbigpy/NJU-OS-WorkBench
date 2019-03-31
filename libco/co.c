@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #define STACK_SIZE 4086
 #define CO_NUM_MAX 15
