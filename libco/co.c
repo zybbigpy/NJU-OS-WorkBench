@@ -21,7 +21,7 @@
 #elif defined(__x86_64__)
 #define SP "%%rsp"
 #define PC "%%rip"
-#define INT long int 
+#define INT long int
 #endif
 
 struct co
@@ -54,7 +54,6 @@ void co_init()
   current = NULL;
 }
 
-
 struct co *co_start(const char *name, func_t func, void *arg)
 {
   struct co *co = (struct co *)malloc(sizeof(struct co));
@@ -85,7 +84,14 @@ struct co *co_start(const char *name, func_t func, void *arg)
   if (setjmp(co->ctx))
   {
     // func(arg);
-    printf("hello world\n");
+    asm volatile("mov " SP ", %0; mov %1, " SP
+                 : "=g"(co->__stack_backup)
+                 : "g"((char *)co->stack + STACK_SIZE));
+
+    asm volatile("mov %0," SP
+                 :
+                 : "g"(co->__stack_backup));
+    //printf("hello world\n");
     longjmp(main_ctx, END);
   }
   return co;
