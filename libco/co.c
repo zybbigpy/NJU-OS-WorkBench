@@ -139,28 +139,28 @@ void co_yield() {
   }
 }
 
-// int g_count = 0;
+int g_count = 0;
 
-// static void add_count() { g_count++; }
+static void add_count() { g_count++; }
 
-// static int get_count() { return g_count; }
+static int get_count() { return g_count; }
 
-// static void work_loop(void *arg) {
-//   const char *s = (const char *)arg;
-//   for (int i = 0; i < 100; ++i) {
-//     printf("%s%d  \n", s, get_count());
-//     add_count();
-//     co_yield();
-//   }
-// }
+static void work_loop(void *arg) {
+  const char *s = (const char *)arg;
+  for (int i = 0; i < 100; ++i) {
+    printf("%s%d  \n", s, get_count());
+    add_count();
+    co_yield();
+  }
+}
 
-// static void work(void *arg) { work_loop(arg); }
+static void work(void *arg) { work_loop(arg); }
 
-// int main() {
-//   // co_init();
-//   struct co* co1 = co_start("T1", work, "hello");
-//   struct co* co2 = co_start("T2", work, "world");
-//   co_wait(co1);
-//   co_wait(co2);
-//   return 0;
-// }
+int main() {
+  // co_init();
+  struct co* co1 = co_start("T1", work, "hello");
+  struct co* co2 = co_start("T2", work, "world");
+  co_wait(co1);
+  co_wait(co2);
+  return 0;
+}
