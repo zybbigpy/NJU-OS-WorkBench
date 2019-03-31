@@ -139,17 +139,17 @@ void co_yield() {
   }
 }
 
-void co1(void *msg) {
-  for (int i = 0; i != 5; ++i) {
-    printf("%s\n", (char *)msg);
-    co_yield();
-  }
-}
+// void co1(void *msg) {
+//   for (int i = 0; i != 100; ++i) {
+//     printf("%s\n", (char *)msg);
+//     co_yield();
+//   }
+// }
 
-int main() {
-  co_init();
-  co_start("T1", co1, "hello");
-  co_start("T2", co1, "world");
-  co_wait(NULL);
-  return 0;
-}
+// int main() {
+//   co_init();
+//   co_start("T1", co1, "hello");
+//   co_start("T2", co1, "world");
+//   co_wait(NULL);
+//   return 0;
+// }
