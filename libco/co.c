@@ -73,12 +73,7 @@ struct co *co_start(const char *name, func_t func, void *arg) {
     // if (flag == 1) {
     asm volatile("mov " SP ", %0; mov %1, " SP
                  : "=g"(co->__stack_backup)
-                 : "g"(co->stack + STACK_SIZE));
-    //   flag = 0;
-    // } else {
-    //  asm volatile("mov %0," SP : : "g"(co->stack + STACK_SIZE));
-    // }
-    // asm volatile("mov %0," SP : : "g"(co->stack + STACK_SIZE));
+                 : "g"((void *)co->stack));
     func(arg);
     asm volatile("mov %0," SP : : "g"(co->__stack_backup));
     longjmp(main_ctx, END);
