@@ -83,7 +83,7 @@ struct co *co_start(const char *name, func_t func, void *arg) {
     //              : "g"(co->stack + sizeof(co->stack)));
 
     // func(arg);
-
+    printf("Iam here\n");
     // asm volatile("mov %0," SP : : "g"(co->__stack_backup));
   }
   return co;
