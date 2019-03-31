@@ -79,7 +79,7 @@ void co_init_(struct co *co) {
                : "g"((char *)co->stack + STACK_SIZE));
   printf("init [co %d] \n", co->id);
   co->func(co->args);
-  asm volatile("mov %0," SP : : "g"(co->__stack_backup));
+  // asm volatile("mov %0," SP : : "g"(co->__stack_backup));
   longjmp(main_ctx, END);
 }
 
