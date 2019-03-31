@@ -74,20 +74,7 @@ struct co *co_start(const char *name, func_t func, void *arg) {
     coroutins->prev = co;
   }
   coroutins = co;
-  //   asm volatile("mov " SP ", %0; mov %1, " SP
-  //                : "=g"(co->__stack_backup)
-  //                : "g"((char *)co->stack + STACK_SIZE));
 
-  //   asm volatile("mov %0," SP
-  //                :
-  //                : "g"(co->__stack_backup));
-  // if (setjmp(co->ctx))
-  // {
-  //   // func(arg);
-
-  //   //printf("hello world\n");
-  //   longjmp(main_ctx, END);
-  // }
   return co;
 }
 
@@ -125,13 +112,13 @@ void co_wait(struct co *thd) {
       co_ = current;
       if (co_->next == co_) {
         coroutins = NULL;
-        co_destroy(co_);
+        //co_destroy(co_);
         return;
       }
       current = current->next;
       co_->prev->next = co_->next;
       co_->next->prev = co_->prev;
-      co_destroy(co_);
+      //co_destroy(co_);
       if (!current->initialized) co_init_(current);
       break;
   }
