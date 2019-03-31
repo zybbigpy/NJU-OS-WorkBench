@@ -97,12 +97,12 @@ struct co *co_start(const char *name, func_t func, void *arg)
     //  {
     //    asm volatile("mov %0," SP : : "g"((void *)co->stack + STACK_SIZE));
     //  }
-     
+    asm volatile("mov %0," SP : : "g"((void *)co->stack + STACK_SIZE));
     // asm volatile("mov " PC ", %0; mov %1, " SP
     //              : "=g"(co->__pc_backup)
     //              : "g"((void *)start_co));
-    //func(arg);
-    printf(" I am here \n");
+    func(arg);
+    // printf(" I am here \n");
     //current->func(current->args);
     // start_co();
     // asm volatile("mov %0," SP : : "g"(co->__stack_backup));
