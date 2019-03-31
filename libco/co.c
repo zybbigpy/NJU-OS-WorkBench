@@ -91,7 +91,7 @@ struct co *co_start(const char *name, func_t func, void *arg) {
   return co;
 }
 
-void co_init(struct co *co) {
+void co_init_(struct co *co) {
   co->initialized = 1;
   asm volatile("mov " SP ", %0; mov %1, " SP
                : "=g"(co->__stack_backup)
@@ -113,12 +113,12 @@ void co_wait(struct co *thd) {
   switch (setjmp(main_ctx)) {
     case INIT:
       current = coroutins;
-      co_init(current);
+      co_init_(current);
       break;
 
     case YIELD:
       current = current->next;
-      if (!current->initialized) co_init(current);
+      if (!current->initialized) co_init_(current);
       break;
 
     case END:
@@ -132,7 +132,7 @@ void co_wait(struct co *thd) {
       co_->prev->next = co_->next;
       co_->next->prev = co_->prev;
       co_destroy(co_);
-      if (!current->initialized) co_init(current);
+      if (!current->initialized) co_init_(current);
       break;
   }
   assert(current);
