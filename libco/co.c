@@ -43,7 +43,8 @@ jmp_buf main_ctx;            // main jmp ctx
 static struct co *coroutins; // use linked list to store coroutines
 static struct co *current;   // current coroutine
 static int co_no = 0;        // total co number
-// int flag = 1;                 // save esp or rsp for the first time
+ int flag = 1;                 // save esp or rsp for the first time
+void *__stack_backup;
 
 void co_init()
 {
@@ -86,14 +87,22 @@ struct co *co_start(const char *name, func_t func, void *arg)
 
   if (setjmp(co->ctx))
   {
-    // if (flag == 1) {
+     if (flag == 1) {
     asm volatile("mov " SP ", %0; mov %1, " SP
-                 : "=g"(co->__stack_backup)
+                 : "=g"(__stack_backup)
                  : "g"((void *)co->stack + STACK_SIZE));
-    asm volatile("mov " PC ", %0; mov %1, " SP
-                 : "=g"(co->__pc_backup)
-                 : "g"((void *)start_co));
+     flag = 0;
+     }
+     else
+     {
+       asm volatile("mov %0," SP : : "g"((void *)co->stack + STACK_SIZE));
+     }
+     
+    // asm volatile("mov " PC ", %0; mov %1, " SP
+    //              : "=g"(co->__pc_backup)
+    //              : "g"((void *)start_co));
     // func(arg);
+    start_co();
     // asm volatile("mov %0," SP : : "g"(co->__stack_backup));
     // longjmp(main_ctx, END);
   }
@@ -128,7 +137,7 @@ void co_wait(struct co *thd)
     {
       coroutins = NULL;
       co_destroy(co_);
-      // asm volatile("mov %0," SP : : "g"(__stack_backup));
+      asm volatile("mov %0," SP : : "g"(__stack_backup));
       return;
     }
     current = current->next;
