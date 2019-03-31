@@ -25,7 +25,7 @@ struct co {
 
   func_t func;
   void *args;
-  char  stack[4096];
+  char stack[STACK_SIZE];
   void *__stack_backup;
 
   struct co *prev;
@@ -80,10 +80,7 @@ static void co_init_(struct co *co) {
   longjmp(main_ctx, END);
 }
 
-static void co_destroy(struct co *thd) {
-  // free(thd->stack);
-  free(thd);
-}
+static void co_destroy(struct co *thd) { free(thd); }
 
 void co_wait(struct co *thd) {
   if (coroutins == NULL) return;
@@ -128,7 +125,6 @@ void co_wait(struct co *thd) {
       break;
   }
   assert(current);
-  // longjmp(current->ctx, 1);
 }
 
 void co_yield() {
@@ -147,7 +143,7 @@ static int get_count() { return g_count; }
 
 static void work_loop(void *arg) {
   const char *s = (const char *)arg;
-  for (int i = 0; i < 100; ++i) {
+  for (int i = 0; i < 500; ++i) {
     printf("%s%d  \n", s, get_count());
     add_count();
     co_yield();
@@ -156,11 +152,15 @@ static void work_loop(void *arg) {
 
 static void work(void *arg) { work_loop(arg); }
 
-int main() {
-  // co_init();
-  struct co* co1 = co_start("T1", work, "hello");
-  struct co* co2 = co_start("T2", work, "world");
+void test() {
+  struct co *co1 = co_start("T1", work, "hello");
+  struct co *co2 = co_start("T2", work, "world");
   co_wait(co1);
   co_wait(co2);
+}
+
+int main() {
+  co_init();
+  test();
   return 0;
 }
