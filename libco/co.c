@@ -17,9 +17,11 @@
 #if defined(__i386__)
 #define SP "%%esp"
 #define PC "%%eip"
+#define INT int
 #elif defined(__x86_64__)
 #define SP "%%rsp"
 #define PC "%%rip"
+#define INT long int 
 #endif
 
 struct co
@@ -43,7 +45,7 @@ jmp_buf main_ctx;            // main jmp ctx
 static struct co *coroutins; // use linked list to store coroutines
 static struct co *current;   // current coroutine
 static int co_no = 0;        // total co number
- int flag = 1;                 // save esp or rsp for the first time
+int flag = 1;                // save esp or rsp for the first time
 void *__stack_backup;
 
 void co_init()
@@ -87,25 +89,8 @@ struct co *co_start(const char *name, func_t func, void *arg)
 
   if (setjmp(co->ctx))
   {
-    //  if (flag == 1) {
-    // asm volatile("mov " SP ", %0; mov %1, " SP
-    //              : "=g"(__stack_backup)
-    //              : "g"((void *)co->stack + STACK_SIZE));
-    //  flag = 0;
-    //  }
-    //  else
-    //  {
-    //    asm volatile("mov %0," SP : : "g"((void *)co->stack + STACK_SIZE));
-    //  }
-    asm volatile("mov %0," SP : : "g"((void *)co->stack + STACK_SIZE));
-    // asm volatile("mov " PC ", %0; mov %1, " SP
-    //              : "=g"(co->__pc_backup)
-    //              : "g"((void *)start_co));
+    co->ctx->__jmpbuf[4] = (INT)((char *)(co->stack) + STACK_SIZE - 16);
     func(arg);
-    // printf(" I am here \n");
-    //current->func(current->args);
-    // start_co();
-    // asm volatile("mov %0," SP : : "g"(co->__stack_backup));
     longjmp(main_ctx, END);
   }
   return co;
