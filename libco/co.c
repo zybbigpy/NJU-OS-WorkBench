@@ -102,7 +102,7 @@ struct co *co_start(const char *name, func_t func, void *arg)
     //              : "=g"(co->__pc_backup)
     //              : "g"((void *)start_co));
     // func(arg);
-    start_co();
+    // start_co();
     // asm volatile("mov %0," SP : : "g"(co->__stack_backup));
     // longjmp(main_ctx, END);
   }
@@ -137,7 +137,7 @@ void co_wait(struct co *thd)
     {
       coroutins = NULL;
       co_destroy(co_);
-      asm volatile("mov %0," SP : : "g"(__stack_backup));
+      // asm volatile("mov %0," SP : : "g"(__stack_backup));
       return;
     }
     current = current->next;
