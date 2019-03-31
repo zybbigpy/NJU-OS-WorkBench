@@ -1,6 +1,7 @@
 #include "co.h"
 #include <setjmp.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define STACK_SIZE 4086
@@ -24,6 +25,7 @@ struct co {
   jmp_buf ctx;
 };  // CO definition
 
+jmp_buf main_ctx;             // main jmp ctx
 static struct co *coroutins;  // use linked list to store coroutines
 static struct co *current;    // current coroutine
 static int co_no = 0;         // total co number
@@ -56,8 +58,7 @@ struct co *co_start(const char *name, func_t func, void *arg) {
   }
   coroutins = co;
 
-  if(setjmp(co->ctx)) {
-    
+  if (setjmp(co->ctx)) {
     func(arg);
     longjmp(main_ctx, END);
   }
@@ -68,8 +69,6 @@ void co_destroy(struct co *thd) {
   free(thd->stack);
   free(thd);
 }
-
-jmp_buf main_ctx;
 
 void co_wait(struct co *thd) {
   if (coroutins == NULL) return;
@@ -86,14 +85,14 @@ void co_wait(struct co *thd) {
 
     case END:
       co_ = current;
-      if(co_->next == co_) {
+      if (co_->next == co_) {
         coroutins = NULL;
         co_destroy(co_);
         return;
       }
       current = current->next;
       co_->prev->next = co_->next;
-      co_->next-> prev = co_->prev;
+      co_->next->prev = co_->prev;
       co_destroy(co_);
       break;
   }
