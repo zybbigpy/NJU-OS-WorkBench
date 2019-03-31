@@ -89,7 +89,7 @@ struct co *co_start(const char *name, func_t func, void *arg)
 
   if (setjmp(co->ctx))
   {
-    co->ctx->__jmpbuf[4] = (INT)((char *)(co->stack) + STACK_SIZE - 16);
+    co->ctx->__jmpbuf[7] = (INT)((char *)(co->stack) + STACK_SIZE - 16);
     func(arg);
     longjmp(main_ctx, END);
   }
