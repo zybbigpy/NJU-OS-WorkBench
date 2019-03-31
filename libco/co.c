@@ -16,8 +16,10 @@
 
 #if defined(__i386__)
 #define SP "%%esp"
+#define PC "%%eip"
 #elif defined(__x86_64__)
 #define SP "%%rsp"
+#define PC "%%rip"
 #endif
 
 struct co {
@@ -46,6 +48,11 @@ void co_init() {
   current = NULL;
 }
 
+static void start_co() {
+  current->func(current->args);
+  longjmp(main_ctx, END);
+}
+
 struct co *co_start(const char *name, func_t func, void *arg) {
   struct co *co = (struct co *)malloc(sizeof(struct co));
   co->args = arg;
@@ -71,12 +78,13 @@ struct co *co_start(const char *name, func_t func, void *arg) {
 
   if (setjmp(co->ctx)) {
     // if (flag == 1) {
-    // asm volatile("mov " SP ", %0; mov %1, " SP
-    //              : "=g"(co->__stack_backup)
-    //              : "g"((void *)co->stack));
-    func(arg);
+    asm volatile("mov " SP ", %0; mov %1, " SP
+                 : "=g"(co->__stack_backup)
+                 : "g"((void *)co->stack+STACK_SIZE));
+    asm volatile("mov %0," PC : : "g"(start_co));
+    // func(arg);
     // asm volatile("mov %0," SP : : "g"(co->__stack_backup));
-    longjmp(main_ctx, END);
+    // longjmp(main_ctx, END);
   }
   return co;
 }
