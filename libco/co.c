@@ -12,16 +12,10 @@
 #define END 1
 #define YIELD 2
 
-// void *__stack_backup;
-
 #if defined(__i386__)
 #define SP "%%esp"
-#define PC "%%eip"
-#define INT int
 #elif defined(__x86_64__)
 #define SP "%%rsp"
-#define PC "%%rip"
-#define INT long int
 #endif
 
 struct co {
@@ -106,25 +100,35 @@ void co_wait(struct co *thd) {
 
     case YIELD:
       current = current->next;
-      if (!current->initialized) co_init_(current);
+      if (!current->initialized) {
+        co_init_(current);
+      } else {
+        longjmp(current->ctx, 1);
+      }
+
       break;
 
     case END:
       co_ = current;
       if (co_->next == co_) {
         coroutins = NULL;
-        //co_destroy(co_);
+        co_destroy(co_);
         return;
       }
       current = current->next;
       co_->prev->next = co_->next;
       co_->next->prev = co_->prev;
-      //co_destroy(co_);
-      if (!current->initialized) co_init_(current);
+      co_destroy(co_);
+      if (!current->initialized) {
+        co_init_(current);
+      } else {
+        longjmp(current->ctx, 1);
+      }
+
       break;
   }
   assert(current);
-  //longjmp(current->ctx, 1);
+  // longjmp(current->ctx, 1);
 }
 
 void co_yield() {
@@ -133,4 +137,19 @@ void co_yield() {
   } else {
     longjmp(main_ctx, YIELD);
   }
+}
+
+void co1(void *msg) {
+  for (int i = 0; i != 5; ++i) {
+    printf("%s\n", (char *)msg);
+    co_yield();
+  }
+}
+
+int main() {
+  co_init();
+  co_start("T1", co1, "hello");
+  co_start("T2", co1, "world");
+  co_wait(NULL);
+  return 0;
 }
