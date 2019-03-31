@@ -25,7 +25,7 @@ struct co {
 
   func_t func;
   void *args;
-  void *stack;
+  char  stack[4096];
   void *__stack_backup;
 
   struct co *prev;
@@ -46,7 +46,7 @@ struct co *co_start(const char *name, func_t func, void *arg) {
   struct co *co = (struct co *)malloc(sizeof(struct co));
   co->args = arg;
   co->func = func;
-  co->stack = malloc(STACK_SIZE);
+  // co->stack = malloc(STACK_SIZE);
   co->id = co_no;
   co->initialized = 0;
   strcpy(co->name, name);
@@ -73,7 +73,7 @@ static void co_init_(struct co *co) {
   co->initialized = 1;
   asm volatile("mov " SP ", %0; mov %1, " SP
                : "=g"(co->__stack_backup)
-               : "g"((char *)co->stack + STACK_SIZE));
+               : "g"(co->stack + STACK_SIZE));
   printf("init [co %d] \n", co->id);
   co->func(co->args);
   // asm volatile("mov %0," SP : : "g"(co->__stack_backup));
@@ -81,7 +81,7 @@ static void co_init_(struct co *co) {
 }
 
 static void co_destroy(struct co *thd) {
-  free(thd->stack);
+  // free(thd->stack);
   free(thd);
 }
 
