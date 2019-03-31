@@ -82,8 +82,8 @@ struct co *co_start(const char *name, func_t func, void *arg) {
     //              : "=g"(co->__stack_backup)
     //              : "g"(co->stack + sizeof(co->stack)));
 
-    // func(arg);
-    printf("Iam here\n");
+     func(arg);
+    //printf("Iam here\n");
     longjmp(main_ctx, END);
     // asm volatile("mov %0," SP : : "g"(co->__stack_backup));
   }
