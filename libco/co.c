@@ -34,16 +34,13 @@ struct co {
   jmp_buf ctx;
 };  // CO definition
 
-jmp_buf main_ctx;             // main jmp ctx
-static struct co *coroutins;  // use linked list to store coroutines
-static struct co *current;    // current coroutine
-static int co_no = 0;         // total co number
-void *__stack_backup;
+jmp_buf main_ctx;                    // main jmp ctx
+static struct co *coroutins = NULL;  // use linked list to store coroutines
+static struct co *current = NULL;    // current coroutine
+static int co_no = 0;                // total co number
+static int flag = 1;
 
-void co_init() {
-  coroutins = NULL;
-  current = NULL;
-}
+void co_init() {}
 
 struct co *co_start(const char *name, func_t func, void *arg) {
   struct co *co = (struct co *)malloc(sizeof(struct co));
@@ -72,24 +69,27 @@ struct co *co_start(const char *name, func_t func, void *arg) {
   return co;
 }
 
-void co_init_(struct co *co) {
+static void co_init_(struct co *co) {
   co->initialized = 1;
   asm volatile("mov " SP ", %0; mov %1, " SP
                : "=g"(co->__stack_backup)
                : "g"((char *)co->stack + STACK_SIZE));
   printf("init [co %d] \n", co->id);
   co->func(co->args);
-  asm volatile("mov %0," SP : : "g"(co->__stack_backup));
+  // asm volatile("mov %0," SP : : "g"(co->__stack_backup));
   longjmp(main_ctx, END);
 }
 
-void co_destroy(struct co *thd) {
+static void co_destroy(struct co *thd) {
   free(thd->stack);
   free(thd);
 }
 
 void co_wait(struct co *thd) {
   if (coroutins == NULL) return;
+  if (flag = 0) return;
+
+  flag = 1;
 
   struct co *co_;
   switch (setjmp(main_ctx)) {
@@ -139,17 +139,28 @@ void co_yield() {
   }
 }
 
-// void co1(void *msg) {
-//   for (int i = 0; i != 100; ++i) {
-//     printf("%s\n", (char *)msg);
+// int g_count = 0;
+
+// static void add_count() { g_count++; }
+
+// static int get_count() { return g_count; }
+
+// static void work_loop(void *arg) {
+//   const char *s = (const char *)arg;
+//   for (int i = 0; i < 100; ++i) {
+//     printf("%s%d  \n", s, get_count());
+//     add_count();
 //     co_yield();
 //   }
 // }
 
+// static void work(void *arg) { work_loop(arg); }
+
 // int main() {
-//   co_init();
-//   co_start("T1", co1, "hello");
-//   co_start("T2", co1, "world");
-//   co_wait(NULL);
+//   // co_init();
+//   struct co* co1 = co_start("T1", work, "hello");
+//   struct co* co2 = co_start("T2", work, "world");
+//   co_wait(co1);
+//   co_wait(co2);
 //   return 0;
 // }
