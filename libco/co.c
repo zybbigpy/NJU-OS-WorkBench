@@ -24,128 +24,125 @@
 #define INT long int
 #endif
 
-struct co
-{
+struct co {
   char name[10];
   int id;
+  int initialized;
 
   func_t func;
   void *args;
   void *stack;
   void *__stack_backup;
-  void *__pc_backup;
 
   struct co *prev;
   struct co *next;
 
   jmp_buf ctx;
-}; // CO definition
+};  // CO definition
 
-jmp_buf main_ctx;            // main jmp ctx
-static struct co *coroutins; // use linked list to store coroutines
-static struct co *current;   // current coroutine
-static int co_no = 0;        // total co number
-int flag = 1;                // save esp or rsp for the first time
+jmp_buf main_ctx;             // main jmp ctx
+static struct co *coroutins;  // use linked list to store coroutines
+static struct co *current;    // current coroutine
+static int co_no = 0;         // total co number
 void *__stack_backup;
 
-void co_init()
-{
+void co_init() {
   coroutins = NULL;
   current = NULL;
 }
 
-struct co *co_start(const char *name, func_t func, void *arg)
-{
+struct co *co_start(const char *name, func_t func, void *arg) {
   struct co *co = (struct co *)malloc(sizeof(struct co));
   co->args = arg;
   co->func = func;
   co->stack = malloc(STACK_SIZE);
   co->id = co_no;
+  co->initialized = 0;
   strcpy(co->name, name);
 
   co_no++;
   assert(co_no < CO_NUM_MAX);
 
   // add co into in the linked list
-  if (!coroutins)
-  {
+  if (!coroutins) {
     co->prev = co;
     co->next = co;
-  }
-  else
-  {
+  } else {
     co->prev = coroutins->prev;
     co->next = coroutins;
     coroutins->prev->next = co;
     coroutins->prev = co;
   }
   coroutins = co;
-    asm volatile("mov " SP ", %0; mov %1, " SP
-                 : "=g"(co->__stack_backup)
-                 : "g"((char *)co->stack + STACK_SIZE));
+  //   asm volatile("mov " SP ", %0; mov %1, " SP
+  //                : "=g"(co->__stack_backup)
+  //                : "g"((char *)co->stack + STACK_SIZE));
 
-    asm volatile("mov %0," SP
-                 :
-                 : "g"(co->__stack_backup));
-  if (setjmp(co->ctx))
-  {
-    // func(arg);
+  //   asm volatile("mov %0," SP
+  //                :
+  //                : "g"(co->__stack_backup));
+  // if (setjmp(co->ctx))
+  // {
+  //   // func(arg);
 
-    //printf("hello world\n");
-    longjmp(main_ctx, END);
-  }
+  //   //printf("hello world\n");
+  //   longjmp(main_ctx, END);
+  // }
   return co;
 }
 
-void co_destroy(struct co *thd)
-{
+void co_init(struct co *co) {
+  co->initialized = 1;
+  asm volatile("mov " SP ", %0; mov %1, " SP
+               : "=g"(co->__stack_backup)
+               : "g"((char *)co->stack + STACK_SIZE));
+  co->func(co->args);
+  asm volatile("mov %0," SP : : "g"(co->__stack_backup));
+  longjmp(main_ctx, END);
+}
+
+void co_destroy(struct co *thd) {
   free(thd->stack);
   free(thd);
 }
 
-void co_wait(struct co *thd)
-{
-  if (coroutins == NULL)
-    return;
+void co_wait(struct co *thd) {
+  if (coroutins == NULL) return;
 
   struct co *co_;
-  switch (setjmp(main_ctx))
-  {
-  case INIT:
-    current = coroutins;
-    break;
+  switch (setjmp(main_ctx)) {
+    case INIT:
+      current = coroutins;
+      co_init(current);
+      break;
 
-  case YIELD:
-    current = current->next;
-    break;
+    case YIELD:
+      current = current->next;
+      if (!current->initialized) co_init(current);
+      break;
 
-  case END:
-    co_ = current;
-    if (co_->next == co_)
-    {
-      coroutins = NULL;
+    case END:
+      co_ = current;
+      if (co_->next == co_) {
+        coroutins = NULL;
+        co_destroy(co_);
+        return;
+      }
+      current = current->next;
+      co_->prev->next = co_->next;
+      co_->next->prev = co_->prev;
       co_destroy(co_);
-      // asm volatile("mov %0," SP : : "g"(__stack_backup));
-      return;
-    }
-    current = current->next;
-    co_->prev->next = co_->next;
-    co_->next->prev = co_->prev;
-    co_destroy(co_);
-    break;
+      if (!current->initialized) co_init(current);
+      break;
   }
   assert(current);
-  longjmp(current->ctx, 1);
+  //longjmp(current->ctx, 1);
 }
 
-void co_yield()
-{
-  if (setjmp(current->ctx))
-  {
+void co_yield() {
+  if (setjmp(current->ctx)) {
     return;
-  }
-  else
-  {
+  } else {
     longjmp(main_ctx, YIELD);
   }
 }
