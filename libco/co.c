@@ -1,9 +1,9 @@
 #include "co.h"
+#include <assert.h>
 #include <setjmp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 #define STACK_SIZE 4086
 #define CO_NUM_MAX 15
@@ -15,12 +15,12 @@
 void *__stack_backup;
 
 #if defined(__i386__)
-  define SP "%%esp"
+#define SP "%%esp"
 #elif defined(__x86_64__)
-  #define SP "%%rsp"
+#define SP "%%rsp"
 #endif
 
-struct co {
+    struct co {
   char name[10];
   int id;
 
@@ -69,8 +69,6 @@ struct co *co_start(const char *name, func_t func, void *arg) {
   coroutins = co;
 
   if (setjmp(co->ctx)) {
-
-    
     func(arg);
     longjmp(main_ctx, END);
   }
