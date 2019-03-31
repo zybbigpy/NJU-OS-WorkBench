@@ -54,11 +54,6 @@ void co_init()
   current = NULL;
 }
 
-// static void start_co()
-// {
-//   current->func(current->args);
-//   longjmp(main_ctx, END);
-// }
 
 struct co *co_start(const char *name, func_t func, void *arg)
 {
@@ -89,7 +84,8 @@ struct co *co_start(const char *name, func_t func, void *arg)
 
   if (setjmp(co->ctx))
   {
-    func(arg);
+    // func(arg);
+    printf("hello world\n");
     longjmp(main_ctx, END);
   }
   return co;
