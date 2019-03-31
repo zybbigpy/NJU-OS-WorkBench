@@ -80,10 +80,6 @@ struct co *co_start(const char *name, func_t func, void *arg)
     coroutins->prev = co;
   }
   coroutins = co;
-
-  if (setjmp(co->ctx))
-  {
-    // func(arg);
     asm volatile("mov " SP ", %0; mov %1, " SP
                  : "=g"(co->__stack_backup)
                  : "g"((char *)co->stack + STACK_SIZE));
@@ -91,6 +87,10 @@ struct co *co_start(const char *name, func_t func, void *arg)
     asm volatile("mov %0," SP
                  :
                  : "g"(co->__stack_backup));
+  if (setjmp(co->ctx))
+  {
+    // func(arg);
+
     //printf("hello world\n");
     longjmp(main_ctx, END);
   }
