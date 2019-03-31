@@ -78,13 +78,13 @@ struct co *co_start(const char *name, func_t func, void *arg) {
     // co->ctx->__jmpbuf[4] = (INT)((char *)(co->stack) + STACK_SIZE);
     // func(arg);
     // longjmp(main_ctx, END);
-    asm volatile("mov " SP ", %0; mov %1, " SP
-                 : "=g"(co->__stack_backup)
-                 : "g"(co->stack + sizeof(co->stack)));
+    // asm volatile("mov " SP ", %0; mov %1, " SP
+    //              : "=g"(co->__stack_backup)
+    //              : "g"(co->stack + sizeof(co->stack)));
 
-    func(arg);
+    // func(arg);
 
-    asm volatile("mov %0," SP : : "g"(co->__stack_backup));
+    // asm volatile("mov %0," SP : : "g"(co->__stack_backup));
   }
   return co;
 }
