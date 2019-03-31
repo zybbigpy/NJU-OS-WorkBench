@@ -21,51 +21,41 @@
 #elif defined(__x86_64__)
 #define SP "%%rsp"
 #define PC "%%rip"
-#define INT long int 
+#define INT long int
 #endif
 
-struct co
-{
+struct co {
   char name[10];
   int id;
 
   func_t func;
   void *args;
-  void *stack;
+  char stack[STACK_SIZE];
   void *__stack_backup;
-  void *__pc_backup;
 
   struct co *prev;
   struct co *next;
 
   jmp_buf ctx;
-}; // CO definition
+};  // CO definition
 
-jmp_buf main_ctx;            // main jmp ctx
-static struct co *coroutins; // use linked list to store coroutines
-static struct co *current;   // current coroutine
-static int co_no = 0;        // total co number
-int flag = 1;                // save esp or rsp for the first time
-void *__stack_backup;
+jmp_buf main_ctx;             // main jmp ctx
+static struct co *coroutins;  // use linked list to store coroutines
+static struct co *current;    // current coroutine
+static int co_no = 0;         // total co number
+int flag = 1;                 // save esp or rsp for the first time
+// void *__stack_backup;
 
-void co_init()
-{
+void co_init() {
   coroutins = NULL;
   current = NULL;
 }
 
-// static void start_co()
-// {
-//   current->func(current->args);
-//   longjmp(main_ctx, END);
-// }
-
-struct co *co_start(const char *name, func_t func, void *arg)
-{
+struct co *co_start(const char *name, func_t func, void *arg) {
   struct co *co = (struct co *)malloc(sizeof(struct co));
   co->args = arg;
   co->func = func;
-  co->stack = malloc(STACK_SIZE);
+  // co->stack = malloc(STACK_SIZE);
   co->id = co_no;
   strcpy(co->name, name);
 
@@ -73,13 +63,10 @@ struct co *co_start(const char *name, func_t func, void *arg)
   assert(co_no < CO_NUM_MAX);
 
   // add co into in the linked list
-  if (!coroutins)
-  {
+  if (!coroutins) {
     co->prev = co;
     co->next = co;
-  }
-  else
-  {
+  } else {
     co->prev = coroutins->prev;
     co->next = coroutins;
     coroutins->prev->next = co;
@@ -87,64 +74,61 @@ struct co *co_start(const char *name, func_t func, void *arg)
   }
   coroutins = co;
 
-  if (setjmp(co->ctx))
-  {
-    co->ctx->__jmpbuf[7] = (INT)((char *)(co->stack) + STACK_SIZE - 16);
+  if (setjmp(co->ctx)) {
+    // co->ctx->__jmpbuf[4] = (INT)((char *)(co->stack) + STACK_SIZE);
+    // func(arg);
+    // longjmp(main_ctx, END);
+    asm volatile("mov " SP ", %0; mov %1, " SP
+                 : "=g"(co->__stack_backup)
+                 : "g"(co->stack + sizeof(co->stack)));
+
     func(arg);
-    longjmp(main_ctx, END);
+
+    asm volatile("mov %0," SP : : "g"(co->__stack_backup));
   }
   return co;
 }
 
-void co_destroy(struct co *thd)
-{
+void co_destroy(struct co *thd) {
   free(thd->stack);
   free(thd);
 }
 
-void co_wait(struct co *thd)
-{
-  if (coroutins == NULL)
-    return;
+void co_wait(struct co *thd) {
+  if (coroutins == NULL) return;
 
   struct co *co_;
-  switch (setjmp(main_ctx))
-  {
-  case INIT:
-    current = coroutins;
-    break;
+  switch (setjmp(main_ctx)) {
+    case INIT:
+      current = coroutins;
+      break;
 
-  case YIELD:
-    current = current->next;
-    break;
+    case YIELD:
+      current = current->next;
+      break;
 
-  case END:
-    co_ = current;
-    if (co_->next == co_)
-    {
-      coroutins = NULL;
+    case END:
+      co_ = current;
+      if (co_->next == co_) {
+        coroutins = NULL;
+        co_destroy(co_);
+        // asm volatile("mov %0," SP : : "g"(__stack_backup));
+        return;
+      }
+      current = current->next;
+      co_->prev->next = co_->next;
+      co_->next->prev = co_->prev;
       co_destroy(co_);
-      // asm volatile("mov %0," SP : : "g"(__stack_backup));
-      return;
-    }
-    current = current->next;
-    co_->prev->next = co_->next;
-    co_->next->prev = co_->prev;
-    co_destroy(co_);
-    break;
+      break;
   }
   assert(current);
   longjmp(current->ctx, 1);
 }
 
-void co_yield()
-{
-  if (setjmp(current->ctx))
-  {
+void co_yield() {
+  if (setjmp(current->ctx)) {
     return;
-  }
-  else
-  {
+  } else {
     longjmp(main_ctx, YIELD);
   }
 }
