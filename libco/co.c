@@ -87,16 +87,16 @@ struct co *co_start(const char *name, func_t func, void *arg)
 
   if (setjmp(co->ctx))
   {
-     if (flag == 1) {
-    asm volatile("mov " SP ", %0; mov %1, " SP
-                 : "=g"(__stack_backup)
-                 : "g"((void *)co->stack + STACK_SIZE));
-     flag = 0;
-     }
-     else
-     {
-       asm volatile("mov %0," SP : : "g"((void *)co->stack + STACK_SIZE));
-     }
+    //  if (flag == 1) {
+    // asm volatile("mov " SP ", %0; mov %1, " SP
+    //              : "=g"(__stack_backup)
+    //              : "g"((void *)co->stack + STACK_SIZE));
+    //  flag = 0;
+    //  }
+    //  else
+    //  {
+    //    asm volatile("mov %0," SP : : "g"((void *)co->stack + STACK_SIZE));
+    //  }
      
     // asm volatile("mov " PC ", %0; mov %1, " SP
     //              : "=g"(co->__pc_backup)
