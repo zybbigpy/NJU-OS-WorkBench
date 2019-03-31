@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define STACK_SIZE 4086
+#define STACK_SIZE 4096
 #define CO_NUM_MAX 15
 
 #define INIT 0
@@ -20,7 +20,7 @@ void *__stack_backup;
 #define SP "%%rsp"
 #endif
 
-    struct co {
+struct co {
   char name[10];
   int id;
 
@@ -38,7 +38,7 @@ jmp_buf main_ctx;             // main jmp ctx
 static struct co *coroutins;  // use linked list to store coroutines
 static struct co *current;    // current coroutine
 static int co_no = 0;         // total co number
-int flag = 0;
+int flag = 1;                 // save esp or rsp for the first time
 
 void co_init() {
   coroutins = NULL;
@@ -49,7 +49,7 @@ struct co *co_start(const char *name, func_t func, void *arg) {
   struct co *co = (struct co *)malloc(sizeof(struct co));
   co->args = arg;
   co->func = func;
-  co->stack = malloc(sizeof(STACK_SIZE));
+  co->stack = malloc(STACK_SIZE);
   co->id = co_no;
   strcpy(co->name, name);
 
@@ -69,6 +69,15 @@ struct co *co_start(const char *name, func_t func, void *arg) {
   coroutins = co;
 
   if (setjmp(co->ctx)) {
+    if (flag == 1) {
+      asm volatile("mov " SP ", %0; mov %1, " SP
+                   : "=g"(__stack_backup)
+                   : "g"(co->stack + STACK_SIZE));
+      flag = 0;
+    } else {
+     asm volatile("mov %0," SP : : "g"(co->stack + STACK_SIZE));
+    }
+
     func(arg);
     longjmp(main_ctx, END);
   }
@@ -98,6 +107,7 @@ void co_wait(struct co *thd) {
       if (co_->next == co_) {
         coroutins = NULL;
         co_destroy(co_);
+        asm volatile("mov %0," SP : : "g"(__stack_backup));
         return;
       }
       current = current->next;
