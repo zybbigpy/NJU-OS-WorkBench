@@ -87,7 +87,7 @@ static void co_destroy(struct co *thd) {
 
 void co_wait(struct co *thd) {
   if (coroutins == NULL) return;
-  if (flag = 0) return;
+  if (flag == 0) return;
 
   flag = 1;
 
