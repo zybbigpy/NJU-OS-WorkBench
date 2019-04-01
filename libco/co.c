@@ -38,7 +38,6 @@ jmp_buf main_ctx;                    // main jmp ctx
 static struct co *coroutins = NULL;  // use linked list to store coroutines
 static struct co *current = NULL;    // current coroutine
 static int co_no = 0;                // total co number
-static int flag = 1;
 
 void co_init() {}
 
@@ -46,7 +45,6 @@ struct co *co_start(const char *name, func_t func, void *arg) {
   struct co *co = (struct co *)malloc(sizeof(struct co));
   co->args = arg;
   co->func = func;
-  // co->stack = malloc(STACK_SIZE);
   co->id = co_no;
   co->initialized = 0;
   strcpy(co->name, name);
@@ -69,14 +67,12 @@ struct co *co_start(const char *name, func_t func, void *arg) {
   return co;
 }
 
-void test (void) {return;}
 static void co_init_(struct co *co) {
   co->initialized = 1;
   asm volatile("mov " SP ", %0; mov %1, " SP
                : "=g"(co->__stack_backup)
                : "g"(co->stack + STACK_SIZE));
   printf("init [co %s], SP is [%p] \n", co->name, co->stack + STACK_SIZE);
-  //test();
   co->func(co->args);
   // asm volatile("mov %0," SP : : "g"(co->__stack_backup));
   longjmp(main_ctx, END);
@@ -86,9 +82,6 @@ static void co_destroy(struct co *thd) { free(thd); }
 
 void co_wait(struct co *thd) {
   if (coroutins == NULL) return;
-  if (flag == 0) return;
-
-  flag = 1;
 
   struct co *co_;
   switch (setjmp(main_ctx)) {
