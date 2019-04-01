@@ -75,8 +75,8 @@ static void co_init_(struct co *co) {
   asm volatile("mov " SP ", %0; mov %1, " SP
                : "=g"(co->__stack_backup)
                : "g"(co->stack + STACK_SIZE));
-  //printf("init [co %s], SP is [%p] \n", co->name, co->stack + STACK_SIZE);
-  test();
+  printf("init [co %s], SP is [%p] \n", co->name, co->stack + STACK_SIZE);
+  //test();
   co->func(co->args);
   // asm volatile("mov %0," SP : : "g"(co->__stack_backup));
   longjmp(main_ctx, END);
