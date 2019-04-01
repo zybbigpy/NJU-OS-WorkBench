@@ -67,7 +67,7 @@ struct co *co_start(const char *name, func_t func, void *arg) {
   return co;
 }
 
-void test(void* addr) {}
+static void test(void* addr) {}
 
 static void co_init_(struct co *co) {
   co->initialized = 1;
