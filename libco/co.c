@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define STACK_SIZE 4096*2
+#define STACK_SIZE 4096
 #define CO_NUM_MAX 15
 
 #define INIT 0
@@ -71,7 +71,7 @@ static void co_init_(struct co *co) {
   co->initialized = 1;
   asm volatile("mov " SP ", %0; mov %1, " SP
                : "=g"(co->__stack_backup)
-               : "g"(co->stack + STACK_SIZE- 20));
+               : "g"(co->stack + STACK_SIZE));
   // printf("init co [%s], SP is [%p] \n", co->name, co->stack + STACK_SIZE);
   // printf("init co[%s]",co->name);
   printf("SP is [%p] \n", co->stack + STACK_SIZE);
