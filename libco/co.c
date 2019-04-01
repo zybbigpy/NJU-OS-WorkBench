@@ -132,7 +132,7 @@ void co_yield() {
     // printf(" in the yield, continune. \n");
     return;
   } else {
-    // printf("in the yield, jmp\n");
+    printf("in the yield, jmp\n");
     longjmp(main_ctx, YIELD);
   }
 }
