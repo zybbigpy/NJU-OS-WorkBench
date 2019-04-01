@@ -130,7 +130,8 @@ void co_wait(struct co *thd) {
 }
 
 void co_yield() {
-  if (setjmp(current->ctx)) {
+  int val = setjmp(current->ctx);
+  if (val != 0) {
     printf("co [%s] in the yield, continune. \n", current->name);
     return;
   } else {
