@@ -129,7 +129,7 @@ void co_wait(struct co *thd) {
 
 void co_yield() {
   if (setjmp(current->ctx)) {
-    printf(" in the yield, continune. \n");
+    // printf(" in the yield, continune. \n");
     return;
   } else {
     printf("in the yield, jmp\n");
