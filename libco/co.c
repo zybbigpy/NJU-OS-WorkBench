@@ -74,7 +74,7 @@ static void co_init_(struct co *co) {
   asm volatile("mov " SP ", %0; mov %1, " SP
                : "=g"(co->__stack_backup)
                : "g"(co->stack + STACK_SIZE));
-  printf("init [co %s], SP is %p \n", co->name,co->stack + STACK_SIZE );
+  printf("init [co %s], SP is [%p] \n", co->name, co->stack + STACK_SIZE);
   co->func(co->args);
   // asm volatile("mov %0," SP : : "g"(co->__stack_backup));
   longjmp(main_ctx, END);
@@ -96,13 +96,14 @@ void co_wait(struct co *thd) {
       break;
 
     case YIELD:
-      printf("current co [%s] before yield [%p]\n",current->name, current);
+      printf("current co [%s] before yield [%p]\n", current->name, current);
       current = current->next;
       printf("current co [%s] after yield [%p]\n", current->name, current);
       if (!current->initialized) {
         co_init_(current);
       } else {
-        printf("current co [%s] jmp_buf is [%p]\n", current->name, current->ctx);
+        printf("current co [%s] jmp_buf is [%p]\n", current->name,
+               current->ctx);
         longjmp(current->ctx, 1);
       }
 
