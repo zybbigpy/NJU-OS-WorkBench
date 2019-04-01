@@ -96,7 +96,9 @@ void co_wait(struct co *thd) {
       break;
 
     case YIELD:
+      printf("current co before yield [%p]\n", current);
       current = current->next;
+      printf("current co after yield [%p]\n", current);
       if (!current->initialized) {
         co_init_(current);
       } else {
