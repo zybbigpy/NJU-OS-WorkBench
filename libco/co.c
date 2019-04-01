@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define STACK_SIZE 4096*2
+#define STACK_SIZE 4096 * 2
 #define CO_NUM_MAX 15
 
 #define INIT 0
@@ -74,7 +74,7 @@ static void co_init_(struct co *co) {
                : "g"(co->stack + STACK_SIZE));
   // printf("init co [%s], SP is [%p] \n", co->name, co->stack + STACK_SIZE);
   // printf("init co[%s]",co->name);
-  printf("SP is [%p] \n", co->stack+STACK_SIZE);
+  printf("SP is [%p] \n", co->stack + STACK_SIZE);
   co->func(co->args);
   // asm volatile("mov %0," SP : : "g"(co->__stack_backup));
   longjmp(main_ctx, END);
@@ -94,14 +94,14 @@ void co_wait(struct co *thd) {
       break;
 
     case YIELD:
-      printf("current co [%s] before yield [%p]\n", current->name, current);
+      // printf("current co [%s] before yield [%p]\n", current->name, current);
       current = current->next;
-      printf("current co [%s] after yield [%p]\n", current->name, current);
+      // printf("current co [%s] after yield [%p]\n", current->name, current);
       if (!current->initialized) {
         co_init_(current);
       } else {
-        printf("current co [%s] jmp_buf is [%p]\n", current->name,
-               current->ctx);
+        // printf("current co [%s] jmp_buf is [%p]\n", current->name,
+        // current->ctx);
         longjmp(current->ctx, 1);
       }
 
@@ -132,11 +132,11 @@ void co_wait(struct co *thd) {
 void co_yield() {
   int val = setjmp(current->ctx);
   if (val != 0) {
-    printf("co [%s] in the yield, arg is [%s], continune. \n", current->name,
-           (char *)current->args);
+    // printf("co [%s] in the yield, arg is [%s], continune. \n", current->name,
+    //        (char *)current->args);
     return;
   } else {
-    printf("co [%s] in the yield, befor jmp.\n", current->name);
+    // printf("co [%s] in the yield, befor jmp.\n", current->name);
     longjmp(main_ctx, YIELD);
   }
 }
