@@ -102,6 +102,7 @@ void co_wait(struct co *thd) {
       if (!current->initialized) {
         co_init_(current);
       } else {
+        printf("current jmp_buf is [%p]\n", current->ctx);
         longjmp(current->ctx, 1);
       }
 
