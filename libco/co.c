@@ -67,7 +67,7 @@ struct co *co_start(const char *name, func_t func, void *arg) {
   return co;
 }
 
-void push_arg(void* addr) {return;}
+void push_arg(void *addr) { return; }
 
 static void co_init_(struct co *co) {
   co->initialized = 1;
@@ -77,9 +77,9 @@ static void co_init_(struct co *co) {
   // printf("init co [%s], SP is [%p] \n", co->name, co->stack + STACK_SIZE);
   // printf("init co[%s]",co->name);
   // printf("SP is [%p] \n", co->stack + STACK_SIZE);
-  
-  // TODO: Amazing BUG, push SP on the stack can solve segment 
-  push_arg(co->stack+STACK_SIZE);
+
+  // TODO: Amazing BUG, push SP on the stack can solve segment
+  push_arg(co->stack + STACK_SIZE);
   co->func(co->args);
   // asm volatile("mov %0," SP : : "g"(co->__stack_backup));
   longjmp(main_ctx, END);
