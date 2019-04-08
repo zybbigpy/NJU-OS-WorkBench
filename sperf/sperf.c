@@ -53,7 +53,7 @@ void parent_proc(int fd) {
 
   // regular expression
   regex_t reg;
-  regmatch_t mat[2];
+  // regmatch_t mat[2];
 
   int rt =
       regcomp(&reg, "(\\w+)\\(.*\\)\\s*=.+<([0-9]+\\.[0-9]+)>", REG_EXTENDED);
@@ -87,9 +87,9 @@ int main(int argc, char *argv[]) {
     error("fork");
   }
   if (pid == 0) {
-    child_proc(pipefd[1], argc, argv);
+    child_proc(pipefd[0], argc, argv);
   } else {
-    parent_proc(pipefd[2]);
+    parent_proc(pipefd[1]);
   }
   return 0;
 }
