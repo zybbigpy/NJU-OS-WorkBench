@@ -22,11 +22,14 @@ typedef struct SysCallInfo {
 // global syscalls
 SysCallInfo syscalls[MAX_SYSCALL_NUM];
 
+// anonymous pipe
+int pipefd[2];
+
 // child process
-void child_proc(int fd, int argc, char *argv[]) {
+void child_proc(int argc, char *argv[]) {
   // redirect stdout
   //close(pipefd[0]);
-  dup2(fd, STDERR_FILENO);
+  dup2(pipefd[1], STDERR_FILENO);
   
   // close(pipefd[1]);
 
@@ -44,10 +47,10 @@ void child_proc(int fd, int argc, char *argv[]) {
 }
 
 // parent process
-void parent_proc(int fd) {
+void parent_proc() {
   // redirect stdin
   //close(pipefd[1]);
-  dup2(fd, STDIN_FILENO);
+  dup2(pipefd[0], STDIN_FILENO);
   // close(pipefd[0]);
   
 
@@ -79,17 +82,20 @@ void parent_proc(int fd) {
 }
 
 int main(int argc, char *argv[]) {
-  // anonymous pipe
-  int pipefd[2];
-  
   pid_t pid = fork();
   if (pid < 0) {
     error("fork");
   }
+
+  int ret = pipe(pipefd);
+  if(ret == -1) {
+    error(pipe);
+  }
+
   if (pid == 0) {
-    child_proc(pipefd[0], argc, argv);
+    child_proc(argc, argv);
   } else {
-    parent_proc(pipefd[1]);
+    parent_proc();
   }
   return 0;
 }
