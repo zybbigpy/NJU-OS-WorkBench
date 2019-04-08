@@ -11,7 +11,7 @@ void error(char *msg) {
 
 int pipefd[2];
 void child_proc(char *args[]) {
-  dup2(pipefd[1], STDERR_FILENO);
+  dup2(pipefd[1], STDOUT_FILENO);
   close(pipefd[0]);
   close(pipefd[1]);
   execvp("/usr/bin/strace", args);
