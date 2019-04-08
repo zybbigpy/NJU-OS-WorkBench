@@ -15,7 +15,9 @@ void child_proc(char *args[]) {
   close(pipefd[0]);
   close(pipefd[1]);
   execvp("/usr/bin/strace", args);
-  error("exev");
+  
+  // should not be here
+  error("execv");
 }
 void parent_proc() {
   dup2(pipefd[1], STDIN_FILENO);
@@ -38,7 +40,9 @@ int main(int argc, char *argv[]) {
     char *args[10];
     args[0] = "strace";
     args[1] = "-T";
-    for (int i = 1; i < argc; ++i) args[i + 1] = argv[i];
+    int i=1；
+    for (; i < argc; ++i) args[i + 1] = argv[i];
+    args[i+1] =NULL;
     child_proc(args);
   } else {
     parent_proc();
