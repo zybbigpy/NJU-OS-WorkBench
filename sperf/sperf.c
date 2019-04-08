@@ -48,7 +48,7 @@ void child_proc(int argc, char *argv[]) {
 // parent process
 void parent_proc() {
   // redirect stdin
-  dup2(pipefd[1], STDIN_FILENO);
+  dup2(pipefd[1], STDERR_FILENO);
   close(pipefd[0]);
   close(pipefd[1]);
 
