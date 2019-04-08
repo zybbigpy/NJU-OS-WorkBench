@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     char *args[10];
     args[0] = "strace";
     args[1] = "-T";
-    int i=1；
+    int i=1;
     for (; i < argc; ++i) args[i + 1] = argv[i];
     args[i+1] =NULL;
     child_proc(args);
