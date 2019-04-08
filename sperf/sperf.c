@@ -56,6 +56,7 @@ void parent_proc() {
   puts("int the parent proc");
   while (fgets(buf, 1024, stdin)) {
     puts(buf);
+    puts("\n");
   }
 }
 
