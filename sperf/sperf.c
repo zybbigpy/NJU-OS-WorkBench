@@ -22,6 +22,7 @@ void parent_proc() {
   close(pipefd[1]);
 
   char buf[1024];
+  puts("int the parent proc");
   while(fgets(buf, 1024, stdin)) {
     puts(buf);
   }
