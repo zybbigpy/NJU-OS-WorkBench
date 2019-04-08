@@ -15,6 +15,7 @@ void child_proc(char *args[]) {
   close(pipefd[0]);
   close(pipefd[1]);
   execvp("/usr/bin/strace", args);
+  error("exev");
 }
 void parent_proc() {
   dup2(pipefd[1], STDIN_FILENO);
