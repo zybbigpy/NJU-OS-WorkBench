@@ -29,7 +29,7 @@ int pipefd[2];
 void child_proc(int argc, char *argv[]) {
   // redirect stdout
   close(pipefd[0]);
-  dup2(pipefd[1], STDERR_FILENO);
+  dup2(pipefd[1], STDOUT_FILENO);
   
   // close(pipefd[1]);
 
@@ -53,7 +53,6 @@ void parent_proc() {
   dup2(pipefd[0], STDIN_FILENO);
   // close(pipefd[0]);
   
-
   // regular expression
   regex_t reg;
   // regmatch_t mat[2];
