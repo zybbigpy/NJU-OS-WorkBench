@@ -63,7 +63,7 @@ void parent_proc() {
   }
 
   char buf[BUFFER_LEN];
-  // puts("int the parent proc");
+  puts("int the parent proc");
   while (fgets(buf, BUFFER_LEN, stdin)) {
     regexec(&reg, buf, 2, mat, 0);
     char str1[BUFFER_LEN] = {0};
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
   if (pid == 0) {
     child_proc(argc, argv);
   } else {
-    // parent_proc();
+    parent_proc();
   }
   return 0;
 }
