@@ -89,7 +89,7 @@ int main(int argc, char *argv[]) {
 
   int ret = pipe(pipefd);
   if(ret == -1) {
-    error(pipe);
+    error("pipe");
   }
 
   if (pid == 0) {
