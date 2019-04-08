@@ -28,9 +28,9 @@ int pipefd[2];
 // child process
 void child_proc(int argc, char *argv[]) {
   // redirect stdout
-  dup2(pipefd[1], STDOUT_FILENO);
-  close(pipefd[0]);
-  close(pipefd[1]);
+  close(pipefd[0]);dup2(pipefd[1], STDOUT_FILENO);
+  
+  // close(pipefd[1]);
 
   // get args for strace -T (-T to get time)
   char *args[16];
