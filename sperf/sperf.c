@@ -22,14 +22,11 @@ typedef struct SysCallInfo {
 // global syscalls
 SysCallInfo syscalls[MAX_SYSCALL_NUM];
 
-// anonymous pipe
-int pipefd[2];
-
 // child process
-void child_proc(int argc, char *argv[]) {
+void child_proc(int fd, int argc, char *argv[]) {
   // redirect stdout
-  close(pipefd[0]);
-  dup2(pipefd[1], STDERR_FILENO);
+  //close(pipefd[0]);
+  dup2(fd, STDERR_FILENO);
   
   // close(pipefd[1]);
 
@@ -47,10 +44,10 @@ void child_proc(int argc, char *argv[]) {
 }
 
 // parent process
-void parent_proc() {
+void parent_proc(int fd) {
   // redirect stdin
-  close(pipefd[1]);
-  dup2(pipefd[0], STDIN_FILENO);
+  //close(pipefd[1]);
+  dup2(fd, STDIN_FILENO);
   // close(pipefd[0]);
   
 
@@ -67,28 +64,32 @@ void parent_proc() {
   char buf[BUFFER_LEN];
   puts("int the parent proc");
   while (fgets(buf, BUFFER_LEN, stdin)) {
-    regexec(&reg, buf, 2, mat, 0);
-    char str1[BUFFER_LEN] = {0};
-    char str2[BUFFER_LEN] = {0};
+    puts(buf);
+    // regexec(&reg, buf, 2, mat, 0);
+    // char str1[BUFFER_LEN] = {0};
+    // char str2[BUFFER_LEN] = {0};
 
-    strncpy(str1, buf + mat[0].rm_so, mat[0].rm_eo - mat[0].rm_so);
-    strncpy(str2, buf + mat[1].rm_so, mat[1].rm_eo - mat[1].rm_so);
-    puts(str1);
-    puts(str2);
+    // strncpy(str1, buf + mat[0].rm_so, mat[0].rm_eo - mat[0].rm_so);
+    // strncpy(str2, buf + mat[1].rm_so, mat[1].rm_eo - mat[1].rm_so);
+    // puts(str1);
+    // puts(str2);
     // puts(buf);
     // puts("\n");
   }
 }
 
 int main(int argc, char *argv[]) {
+  // anonymous pipe
+  int pipefd[2];
+  
   pid_t pid = fork();
   if (pid < 0) {
     error("fork");
   }
   if (pid == 0) {
-    child_proc(argc, argv);
+    child_proc(pipefd[1], argc, argv);
   } else {
-    parent_proc();
+    parent_proc(pipefd[2]);
   }
   return 0;
 }
