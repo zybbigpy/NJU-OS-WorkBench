@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
   if (pid == 0) {
     child_proc(argc, argv);
   } else {
-    parent_proc();
+    // parent_proc();
   }
   return 0;
 }
