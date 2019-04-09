@@ -53,7 +53,7 @@ void calculate_time_percent() {
   for (int i = 0; i < syscall_num; ++i) {
     printf("sys time is %lld", syscalls[i].sys_time);
     syscalls[i].time_percent = syscalls[i].sys_time *100 / total_time;
-    printf("the percentag is %f\n", syscalls[i].time_percent);}
+    printf("the percentag is %.2f\n", syscalls[i].time_percent);}
 }
 
 void add_syscall(char *name, char *time) {
@@ -73,7 +73,7 @@ void print_syscall() {
   calculate_time_percent();
   printf("the syscall num is %d. \n", syscall_num);
   for (int i = 0; i < syscall_num; ++i) {
-    printf("sycall: %s, time %lld us, percentage %f %%\n",
+    printf("sycall: %s, time %lld us, percentage %.2f %%\n",
            syscalls[i].syscall_name, syscalls[i].sys_time,
            syscalls[i].time_percent);
   }
