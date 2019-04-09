@@ -72,7 +72,7 @@ int FillSysProcInfo(
     strncpy(comm, lh, rh-lh+1);
     comm[rh-lh+1]='\0';
     sscanf(buf, "%d", &pid);
-    sscanf(rh+1, "%c %d",&state, &ppid);
+    sscanf(rh+2, "%c %d",&state, &ppid);
     printf("Read info [%d %s %c %d]\n", pid, comm, state, ppid);
   } else {
     perror("open file fail \n");
