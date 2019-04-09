@@ -185,6 +185,7 @@ int AddChildNode(TreeNode *root, ProcInfo *instance) {
     }
     return 0;
   } else {
+    printf("the proc info is [pid %d] [ppid %d] \n  ", instance->pid, instance->ppid);
     return 1;
   }
 }
