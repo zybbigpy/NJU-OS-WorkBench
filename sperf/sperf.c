@@ -24,13 +24,13 @@ typedef struct SysCallInfo {
 SysCallInfo syscalls[MAX_SYSCALL_NUM];
 
 // anonymous pipe
-int pipefd[2];
+// int pipefd[2];
 
 // child process
-void child_proc(int argc, char *argv[]) {
+void child_proc(int fd, int argc, char *argv[]) {
   // redirect stdout
-  close(pipefd[0]);
-  dup2(pipefd[1], STDERR_FILENO);
+  // close(pipefd[0]);
+  dup2(fd, STDERR_FILENO);
   
   // close(pipefd[1]);
 
@@ -48,10 +48,10 @@ void child_proc(int argc, char *argv[]) {
 }
 
 // parent process
-void parent_proc() {
+void parent_proc(int fd) {
   // redirect stdin
-  close(pipefd[1]);
-  dup2(pipefd[0], STDIN_FILENO);
+  // close(pipefd[1]);
+  dup2(fd, STDIN_FILENO);
   // close(pipefd[0]);
   
   // regular expression
@@ -83,6 +83,7 @@ void parent_proc() {
 }
 
 int main(int argc, char *argv[]) {
+  int pipefd[2];
   pid_t pid = fork();
   if (pid < 0) {
     error("fork");
@@ -94,9 +95,11 @@ int main(int argc, char *argv[]) {
   }
 
   if (pid == 0) {
-    child_proc(argc, argv);
+    close(pipefd[0]);
+    child_proc(pipefd[1], argc, argv);
   } else {
-    parent_proc();
+    close(pipefd[1]);
+    parent_proc(pipefd[0]);
   }
   return 0;
 }
