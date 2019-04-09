@@ -17,8 +17,9 @@ void error(char *msg) {
 
 // syscall info
 typedef struct SysCallInfo {
-  char syscall_name[20];
-  long long sys_time;
+  char syscall_name[64];
+  long long sys_time;  // micro secs
+  double time_percent;
 } SysCallInfo;
 
 // global syscalls
@@ -26,7 +27,6 @@ SysCallInfo syscalls[MAX_SYSCALL_NUM];
 int syscall_num = 0;
 
 long long time_transfer(char *time) {
-  printf("before transfer %s,", time);
   long long ret = 0;
   while (*time) {
     if (*time >= '0' && *time <= '9') {
@@ -34,8 +34,6 @@ long long time_transfer(char *time) {
     }
     ++time;
   }
-  printf("after transfer %lld\n", ret);
-
   return ret;
 }
 
@@ -45,6 +43,14 @@ int find_syscall(char *name) {
     if (strcmp(syscalls[i].syscall_name, name) == 0) ret = i;
 
   return ret;
+}
+
+void calculate_time_percent() {
+  long long total_time = 0;
+  for (int i = 0; i < syscall_num; ++i) total_time += syscalls[i].sys_time;
+
+  for (int i = 0; i < syscall_num; ++i)
+    syscalls[i].time_percent = syscalls[i].sys_time / total_time;
 }
 
 void add_syscall(char *name, char *time) {
@@ -61,10 +67,12 @@ void add_syscall(char *name, char *time) {
 }
 
 void print_syscall() {
+  calculate_time_percent();
   printf("the syscall num is %d. \n", syscall_num);
   for (int i = 0; i < syscall_num; ++i) {
-    printf("sycall: %s, time %lld\n", syscalls[i].syscall_name,
-    syscalls[i].sys_time);
+    printf("sycall: %s, time %lld us, percentage %d %%\n",
+           syscalls[i].syscall_name, syscalls[i].sys_time,
+           syscalls[i].time_percent);
   }
 }
 
