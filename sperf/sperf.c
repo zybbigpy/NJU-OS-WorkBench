@@ -43,12 +43,6 @@ void child_proc(int fd, int argc, char *argv[]) {
   error("execv");
 }
 
-char *get_string(char *str, int size, regmatch_t *match) {
-  str[match->rm_eo] = '\0';
-  printf(" the str is %s \n", str + match->rm_so);
-  return str + match->rm_so;
-}
-
 // parent process
 void parent_proc(int fd) {
   // redirect stdin
@@ -68,17 +62,15 @@ void parent_proc(int fd) {
   char buf[BUFFER_LEN];
   assert(fgets(buf, BUFFER_LEN, stdin) != NULL);
   while (fgets(buf, BUFFER_LEN, stdin)) {
-    regexec(&reg, buf, 3, mat, 0);
-    char str1[BUFFER_LEN] = {0};
-    char str2[BUFFER_LEN] = {0};
+    if (regexec(&reg, buf, 3, mat, 0) == 0) {
+      char str1[BUFFER_LEN] = {0};
+      char str2[BUFFER_LEN] = {0};
 
-    strncpy(str1, buf + mat[2].rm_so, mat[2].rm_eo - mat[2].rm_so);
-    
-    strncpy(str2, buf + mat[1].rm_so, mat[1].rm_eo - mat[1].rm_so);
-    puts(str1);
-    puts(str2);
-   // buf[mat[0].rm_eo] = '\0';
-   // printf(" the str is %s \n",buf+mat[0].rm_so);
+      strncpy(str1, buf + mat[1].rm_so, mat[1].rm_eo - mat[1].rm_so);
+      strncpy(str2, buf + mat[2].rm_so, mat[2].rm_eo - mat[2].rm_so);
+      puts(str1);
+      puts(str2);
+    }
   }
 }
 
