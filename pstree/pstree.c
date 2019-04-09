@@ -52,11 +52,12 @@ int FillSysProcInfo(
     //        &sys_porcs[*proc_index].ppid, &sys_porcs[*proc_index].pgrp);
     char buf[MAX_FILE_ADDR_LEN];
     fgets(buf, MAX_FILE_ADDR_LEN, fp);
+    printf("the buf is %s", buf);
     int pid, ppid;
     char state;
     char comm[32];
     sscanf(buf, "%d %s %c %d", &pid, comm, &state, &ppid);
-    printf("Read info [%d %s %c %d]\n", pid, comm,state, ppid);
+    printf("Read info [%d %s %c %d]\n", pid, comm, state, ppid);
   } else {
     perror("open file fail \n");
     exit(EXIT_FAILURE);
