@@ -45,12 +45,13 @@ int find_syscall(char *name) {
   return ret;
 }
 
+long long total_time = 0;
+
 void calculate_time_percent() {
-  long long total_time = 0;
   for (int i = 0; i < syscall_num; ++i) total_time += syscalls[i].sys_time;
 
-  for (int i = 0; i < syscall_num; ++i) 
-    syscalls[i].time_percent = syscalls[i].sys_time *100 / total_time;
+  for (int i = 0; i < syscall_num; ++i)
+    syscalls[i].time_percent = syscalls[i].sys_time * 100 / total_time;
 }
 
 void add_syscall(char *name, char *time) {
@@ -68,9 +69,10 @@ void add_syscall(char *name, char *time) {
 
 void print_syscall() {
   calculate_time_percent();
-  printf("the syscall num is %d. \n", syscall_num);
+  printf("the syscall number is %d, the total syscall time is %lld us\n",
+         syscall_num, total_time);
   for (int i = 0; i < syscall_num; ++i) {
-    printf("sycall: %s, time %lld us, percentage %.2f %%\n",
+    printf("sycall: %s, time %lld us, percentage %.2f%%\n",
            syscalls[i].syscall_name, syscalls[i].sys_time,
            syscalls[i].time_percent);
   }
