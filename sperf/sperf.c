@@ -69,6 +69,7 @@ void add_syscall(char *name, char *time) {
 
 void print_syscall() {
   calculate_time_percent();
+  printf("====================\n");
   printf("the syscall number is %d, the total syscall time is %lld us\n",
          syscall_num, total_time);
   for (int i = 0; i < syscall_num; ++i) {
@@ -76,6 +77,7 @@ void print_syscall() {
            syscalls[i].syscall_name, syscalls[i].sys_time,
            syscalls[i].time_percent);
   }
+  printf("====================\n");
 }
 
 // child process
