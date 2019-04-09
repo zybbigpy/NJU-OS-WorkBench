@@ -285,7 +285,7 @@ int main(int argc, char *argv[]) {
   }
 
   BuildPstree(root, sys_porcs);
-  PrintPstree(root);
+  //PrintPstree(root);
   DestroyPstree(root);
   exit(EXIT_SUCCESS);
 }
