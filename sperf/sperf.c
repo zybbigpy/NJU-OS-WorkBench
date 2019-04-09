@@ -94,6 +94,7 @@ void parent_proc(int fd) {
       strncpy(str1, buf + mat[1].rm_so, mat[1].rm_eo - mat[1].rm_so);  // name
       strncpy(str2, buf + mat[2].rm_so, mat[2].rm_eo - mat[2].rm_so);  // time
       add_syscall(str1, str2);
+      print_syscall();
     }
   }
 }
