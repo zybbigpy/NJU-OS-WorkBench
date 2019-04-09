@@ -50,6 +50,10 @@ int FillSysProcInfo(
     fscanf(fp, "%d%s%s%d%d", &sys_porcs[*proc_index].pid,
            sys_porcs[*proc_index].comm, sys_porcs[*proc_index].state,
            &sys_porcs[*proc_index].ppid, &sys_porcs[*proc_index].pgrp);
+    
+    printf("Read info [%d %s %s %d %d]\n",sys_porcs[*proc_index].pid,
+           sys_porcs[*proc_index].comm, sys_porcs[*proc_index].state,
+           sys_porcs[*proc_index].ppid, sys_porcs[*proc_index].pgrp );
   } else {
     perror("open file fail \n");
     exit(EXIT_FAILURE);
