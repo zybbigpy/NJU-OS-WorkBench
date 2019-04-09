@@ -54,15 +54,16 @@ int FillSysProcInfo(
     puts(buf);
 
     char *lh = buf;
-    char *rh = &buf[MAX_FILE_ADDR_LEN];
+    char *rh = buf;
     while (*lh) {
       if (*lh == '(') break;
       ++lh;
     }
     while (*rh) {
       if (*rh == ')') break;
-      --rh;
+      ++rh;
     }
+    if(*(rh+1)==')') ++rh;
 
     int pid, ppid;
     char state;
