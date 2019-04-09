@@ -53,10 +53,25 @@ int FillSysProcInfo(
     char buf[MAX_FILE_ADDR_LEN];
     fgets(buf, MAX_FILE_ADDR_LEN, fp);
     printf("the buf is %s", buf);
+
+    char *lh = buf;
+    char *rh = buf;
+    while (*lh) {
+      if (*lh == '(') break;
+      ++lh;
+    }
+    while (*rh) {
+      if (*rh == ')') break;
+      ++rh;
+    }
+
     int pid, ppid;
     char state;
     char comm[32];
-    sscanf(buf, "%d %s %c %d", &pid, comm, &state, &ppid);
+    
+    strncpy(comm, lh, rh-lh);
+    sscanf(buf, "%d", &pid);
+    sscanf(rh, "%c %d",&state, &ppid);
     printf("Read info [%d %s %c %d]\n", pid, comm, state, ppid);
   } else {
     perror("open file fail \n");
@@ -193,7 +208,8 @@ int AddChildNode(TreeNode *root, ProcInfo *instance) {
     }
     return 0;
   } else {
-    printf("the proc info is [pid %d] [comm %s] [ppid %d] \n  ", instance->pid, instance->comm, instance->ppid);
+    printf("the proc info is [pid %d] [comm %s] [ppid %d] \n  ", instance->pid,
+           instance->comm, instance->ppid);
     return 1;
   }
 }
@@ -289,7 +305,7 @@ int main(int argc, char *argv[]) {
   }
 
   BuildPstree(root, sys_porcs);
-  //PrintPstree(root);
+  // PrintPstree(root);
   DestroyPstree(root);
   exit(EXIT_SUCCESS);
 }
