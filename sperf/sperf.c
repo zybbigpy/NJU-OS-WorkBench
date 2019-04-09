@@ -71,8 +71,6 @@ void parent_proc(int fd) {
     strncpy(str2, buf + mat[1].rm_so, mat[1].rm_eo - mat[1].rm_so);
     puts(str1);
     puts(str2);
-    puts(buf);
-    puts("\n");
   }
 }
 
