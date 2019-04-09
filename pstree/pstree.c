@@ -70,6 +70,7 @@ int FillSysProcInfo(
     char comm[32];
     
     strncpy(comm, lh, rh-lh+1);
+    comm[rh-lh+1]='\0';
     sscanf(buf, "%d", &pid);
     sscanf(rh+2, "%c %d",&state, &ppid);
     printf("Read info [%d %s %c %d]\n", pid, comm, state, ppid);
