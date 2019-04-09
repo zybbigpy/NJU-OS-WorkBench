@@ -10,7 +10,7 @@
 #include <unistd.h>
 
 #define MAX_PROC_NUM 1024
-#define MAX_FILE_ADDR_LEN 300
+#define MAX_FILE_ADDR_LEN 512
 #define MAX_TREE_DEPTH 20
 
 /*================= GLOBAL RELATED =====================*/
@@ -47,13 +47,16 @@ int FillSysProcInfo(
     int *proc_index) {  // the file address is always /proc/[pid]/stat
   FILE *fp = fopen(file_addr, "r");
   if (fp) {
-    fscanf(fp, "%d%s%c%d%d", &sys_porcs[*proc_index].pid,
-           sys_porcs[*proc_index].comm, &sys_porcs[*proc_index].state,
-           &sys_porcs[*proc_index].ppid, &sys_porcs[*proc_index].pgrp);
-    
-    printf("Read info [%d %s %c %d %d]\n",sys_porcs[*proc_index].pid,
-           sys_porcs[*proc_index].comm, sys_porcs[*proc_index].state,
-           sys_porcs[*proc_index].ppid, sys_porcs[*proc_index].pgrp );
+    // fscanf(fp, "%d%s%c%d%d", &sys_porcs[*proc_index].pid,
+    //        sys_porcs[*proc_index].comm, &sys_porcs[*proc_index].state,
+    //        &sys_porcs[*proc_index].ppid, &sys_porcs[*proc_index].pgrp);
+    char buf[MAX_FILE_ADDR_LEN];
+    fgets(buf, MAX_FILE_ADDR_LEN, fp);
+    int pid, ppid;
+    char state;
+    char comm[32];
+    sscanf(buf, "%d %s %c %d", &pid, comm, &state, &ppid);
+    printf("Read info [%d %s %c %d]\n", pid, comm,state, ppid);
   } else {
     perror("open file fail \n");
     exit(EXIT_FAILURE);
