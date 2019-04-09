@@ -84,16 +84,18 @@ void parent_proc(int fd) {
 
 int main(int argc, char *argv[]) {
   int pipefd[2];
-  pid_t pid = fork();
-  if (pid < 0) {
-    error("fork");
-  }
+  
 
   int ret = pipe(pipefd);
   if(ret == -1) {
     error("pipe");
   }
-
+  
+  pid_t pid = fork();
+  if (pid < 0)
+  {
+    error("fork");
+  }
   if (pid == 0) {
     close(pipefd[0]);
     child_proc(pipefd[1], argc, argv);
