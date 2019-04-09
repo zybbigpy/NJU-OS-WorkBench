@@ -18,12 +18,24 @@ void error(char *msg) {
 // syscall info
 typedef struct SysCallInfo {
   char syscall_name[20];
-  int total_time;
+  long long sys_time;
 } SysCallInfo;
 
 // global syscalls
 SysCallInfo syscalls[MAX_SYSCALL_NUM];
 int syscall_num = 0;
+
+long long time_transfer(char *time) {
+  long long ret = 0;
+  while (*time) {
+    if (*time > '0' && *time < '9') {
+      ret = ret * 10 + *time - '0';
+    }
+    ++time;
+  }
+
+  return ret;
+}
 
 int find_syscall(char *name) {
   int ret = -1;
@@ -34,18 +46,22 @@ int find_syscall(char *name) {
 }
 
 void add_syscall(char *name, char *time) {
+  long long time_ = time_transfer(time);
   int find_id = find_syscall(name);
   if (find_id == -1) {
     strcpy(syscalls[syscall_num].syscall_name, name);
+    syscalls[syscall_num].sys_time = time_;
     syscall_num++;
+    assert(syscall_num < MAX_SYSCALL_NUM);
   } else {
+    syscalls[find_id].sys_time += time_;
   }
 }
 
 void print_syscall() {
   printf("the syscall num is %d. \n", syscall_num);
   for (int i = 0; i < syscall_num; ++i) {
-    printf("sycall: %s.\n", syscalls[i].syscall_name);
+    printf("sycall: %s\n", syscalls[i].syscall_name);
   }
 }
 
