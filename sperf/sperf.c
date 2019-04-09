@@ -1,13 +1,14 @@
+#include <assert.h>
 #include <regex.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <assert.h>
 
 #define MAX_SYSCALL_NUM 512
 #define BUFFER_LEN 1024
+
 // deal with error
 void error(char *msg) {
   perror(msg);
@@ -23,16 +24,11 @@ typedef struct SysCallInfo {
 // global syscalls
 SysCallInfo syscalls[MAX_SYSCALL_NUM];
 
-// anonymous pipe
-// int pipefd[2];
-
 // child process
 void child_proc(int fd, int argc, char *argv[]) {
   // redirect stdout
-  // close(pipefd[0]);
   dup2(fd, STDERR_FILENO);
-  
-  // close(pipefd[1]);
+  close(fd);
 
   // get args for strace -T (-T to get time)
   char *args[16];
@@ -50,10 +46,9 @@ void child_proc(int fd, int argc, char *argv[]) {
 // parent process
 void parent_proc(int fd) {
   // redirect stdin
-  // close(pipefd[1]);
   dup2(fd, STDIN_FILENO);
-  // close(pipefd[0]);
-  
+  close(fd);
+
   // regular expression
   regex_t reg;
   // regmatch_t mat[2];
@@ -66,7 +61,7 @@ void parent_proc(int fd) {
 
   char buf[BUFFER_LEN];
   puts("int the parent proc");
-  assert(fgets(buf, BUFFER_LEN, stdin)!=NULL);
+  assert(fgets(buf, BUFFER_LEN, stdin) != NULL);
   while (fgets(buf, BUFFER_LEN, stdin)) {
     puts("here");
     // regexec(&reg, buf, 2, mat, 0);
@@ -84,16 +79,14 @@ void parent_proc(int fd) {
 
 int main(int argc, char *argv[]) {
   int pipefd[2];
-  
 
   int ret = pipe(pipefd);
-  if(ret == -1) {
+  if (ret == -1) {
     error("pipe");
   }
-  
+
   pid_t pid = fork();
-  if (pid < 0)
-  {
+  if (pid < 0) {
     error("fork");
   }
   if (pid == 0) {
