@@ -84,7 +84,7 @@ void print_syscall() {
 // child process
 void child_proc(int fd, int argc, char *argv[]) {
   // redirect stdout
-  dup2(fd, STDERR_FILENO);
+  dup2(fd, STDOUT_FILENO);
   close(fd);
 
   // get args for strace -T (-T to get time)
