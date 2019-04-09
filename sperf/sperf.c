@@ -29,7 +29,7 @@ long long time_transfer(char *time) {
   printf("before transfer %s,", time);
   long long ret = 0;
   while (*time) {
-    if (*time > '0' && *time < '9') {
+    if (*time >= '0' && *time <= '9') {
       ret = ret * 10 + *time - '0';
     }
     ++time;
