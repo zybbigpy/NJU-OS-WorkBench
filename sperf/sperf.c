@@ -51,7 +51,7 @@ void parent_proc(int fd) {
 
   // regular expression
   regex_t reg;
-  // regmatch_t mat[2];
+  regmatch_t mat[2];
 
   int rt =
       regcomp(&reg, "(\\w+)\\(.*\\)\\s*=.+<([0-9]+\\.[0-9]+)>", REG_EXTENDED);
@@ -63,17 +63,16 @@ void parent_proc(int fd) {
   puts("int the parent proc");
   assert(fgets(buf, BUFFER_LEN, stdin) != NULL);
   while (fgets(buf, BUFFER_LEN, stdin)) {
-    puts("here");
-    // regexec(&reg, buf, 2, mat, 0);
-    // char str1[BUFFER_LEN] = {0};
-    // char str2[BUFFER_LEN] = {0};
+    regexec(&reg, buf, 2, mat, 0);
+    char str1[BUFFER_LEN] = {0};
+    char str2[BUFFER_LEN] = {0};
 
-    // strncpy(str1, buf + mat[0].rm_so, mat[0].rm_eo - mat[0].rm_so);
-    // strncpy(str2, buf + mat[1].rm_so, mat[1].rm_eo - mat[1].rm_so);
-    // puts(str1);
-    // puts(str2);
-    // puts(buf);
-    // puts("\n");
+    strncpy(str1, buf + mat[0].rm_so, mat[0].rm_eo - mat[0].rm_so);
+    strncpy(str2, buf + mat[1].rm_so, mat[1].rm_eo - mat[1].rm_so);
+    puts(str1);
+    puts(str2);
+    puts(buf);
+    puts("\n");
   }
 }
 
