@@ -26,6 +26,7 @@ SysCallInfo syscalls[MAX_SYSCALL_NUM];
 int syscall_num = 0;
 
 long long time_transfer(char *time) {
+  printf("before transfer %s,", time);
   long long ret = 0;
   while (*time) {
     if (*time > '0' && *time < '9') {
@@ -33,6 +34,7 @@ long long time_transfer(char *time) {
     }
     ++time;
   }
+  printf("after transfer %lld\n", ret);
 
   return ret;
 }
@@ -46,7 +48,6 @@ int find_syscall(char *name) {
 }
 
 void add_syscall(char *name, char *time) {
-  puts(time);
   long long time_ = time_transfer(time);
   int find_id = find_syscall(name);
   if (find_id == -1) {
