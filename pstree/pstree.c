@@ -35,7 +35,6 @@ typedef struct ProcInfo {
   char comm[50];
   char state;
   pid_t ppid;
-  pid_t pgrp;
   int level;  // the child level in the pstree
 } ProcInfo;   // ref: man proc
 
@@ -52,7 +51,6 @@ int FillSysProcInfo(
     //        &sys_porcs[*proc_index].ppid, &sys_porcs[*proc_index].pgrp);
     char buf[MAX_FILE_ADDR_LEN];
     fgets(buf, MAX_FILE_ADDR_LEN, fp);
-    //printf("the buf is %s", buf);
 
     char *lh = buf;
     char *rh = buf;
@@ -74,6 +72,11 @@ int FillSysProcInfo(
     sscanf(buf, "%d", &pid);
     sscanf(rh + 2, "%c %d", &state, &ppid);
     printf("Read info [%d %s %c %d]\n", pid, comm, state, ppid);
+
+    sys_porcs[*proc_index].pid = pid;
+    sys_porcs[*proc_index].ppid = ppid;
+    sys_porcs[*proc_index].state = state;
+    strcpy(sys_porcs[*proc_index].comm, comm);
   } else {
     perror("open file fail \n");
     exit(EXIT_FAILURE);
@@ -306,7 +309,7 @@ int main(int argc, char *argv[]) {
   }
 
   BuildPstree(root, sys_porcs);
-  // PrintPstree(root);
+  PrintPstree(root);
   DestroyPstree(root);
   exit(EXIT_SUCCESS);
 }
