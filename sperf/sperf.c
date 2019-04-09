@@ -1,8 +1,10 @@
 #include <assert.h>
+#include <fcntl.h>
 #include <regex.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -48,8 +50,7 @@ int find_syscall(char *name) {
 long long total_time = 0;
 
 void calculate_time_percent() {
-  for (int i = 0; i < syscall_num; ++i) 
-    total_time += syscalls[i].sys_time;
+  for (int i = 0; i < syscall_num; ++i) total_time += syscalls[i].sys_time;
 
   for (int i = 0; i < syscall_num; ++i)
     syscalls[i].time_percent = syscalls[i].sys_time * 100 / total_time;
@@ -86,6 +87,10 @@ void child_proc(int fd, int argc, char *argv[]) {
   // redirect stdout
   dup2(fd, STDERR_FILENO);
   close(fd);
+
+  int fd_ = open("/dev/null", O_RDWR);
+  dup2(fd_, STDOUT_FILENO);
+  close(fd_);
 
   // get args for strace -T (-T to get time)
   char *args[16];
@@ -128,6 +133,7 @@ void parent_proc(int fd) {
       add_syscall(str1, str2);
     }
   }
+  regfree(&reg);
   print_syscall();
 }
 
