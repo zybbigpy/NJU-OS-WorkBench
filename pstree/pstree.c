@@ -70,7 +70,7 @@ int FillSysProcInfo(
     comm[rh - lh + 1] = '\0';
     sscanf(buf, "%d", &pid);
     sscanf(rh + 2, "%c %d", &state, &ppid);
-    printf("Read info [%d %s %c %d]\n", pid, comm, state, ppid);
+    // printf("Read info [%d %s %c %d]\n", pid, comm, state, ppid);
 
     sys_porcs[*proc_index].pid = pid;
     sys_porcs[*proc_index].ppid = ppid;
