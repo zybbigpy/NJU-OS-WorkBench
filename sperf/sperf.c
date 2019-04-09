@@ -46,6 +46,7 @@ int find_syscall(char *name) {
 }
 
 void add_syscall(char *name, char *time) {
+  puts(time);
   long long time_ = time_transfer(time);
   int find_id = find_syscall(name);
   if (find_id == -1) {
