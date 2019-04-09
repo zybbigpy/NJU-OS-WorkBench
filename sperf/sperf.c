@@ -4,6 +4,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <assert.h>
 
 #define MAX_SYSCALL_NUM 512
 #define BUFFER_LEN 1024
@@ -29,7 +30,7 @@ int pipefd[2];
 void child_proc(int argc, char *argv[]) {
   // redirect stdout
   close(pipefd[0]);
-  dup2(pipefd[1], STDOUT_FILENO);
+  dup2(pipefd[1], STDERR_FILENO);
   
   // close(pipefd[1]);
 
@@ -65,6 +66,7 @@ void parent_proc() {
 
   char buf[BUFFER_LEN];
   puts("int the parent proc");
+  assert(fgets(buf, BUFFER_LEN, stdin)!=NULL);
   while (fgets(buf, BUFFER_LEN, stdin)) {
     puts("here");
     // regexec(&reg, buf, 2, mat, 0);
