@@ -46,12 +46,9 @@ int FillSysProcInfo(
     int *proc_index) {  // the file address is always /proc/[pid]/stat
   FILE *fp = fopen(file_addr, "r");
   if (fp) {
-    // fscanf(fp, "%d%s%c%d%d", &sys_porcs[*proc_index].pid,
-    //        sys_porcs[*proc_index].comm, &sys_porcs[*proc_index].state,
-    //        &sys_porcs[*proc_index].ppid, &sys_porcs[*proc_index].pgrp);
+    // it is a very ugly implementation !!
     char buf[MAX_FILE_ADDR_LEN];
     fgets(buf, MAX_FILE_ADDR_LEN, fp);
-    //puts(buf);
 
     char *lh = buf;
     char *rh = buf;
@@ -63,7 +60,7 @@ int FillSysProcInfo(
       if (*rh == ')') break;
       ++rh;
     }
-    if(*(rh+1)==')') ++rh;
+    if (*(rh + 1) == ')') ++rh;
 
     int pid, ppid;
     char state;
@@ -311,7 +308,7 @@ int main(int argc, char *argv[]) {
   }
 
   BuildPstree(root, sys_porcs);
-  //PrintPstree(root);
+  PrintPstree(root);
   DestroyPstree(root);
   exit(EXIT_SUCCESS);
 }
