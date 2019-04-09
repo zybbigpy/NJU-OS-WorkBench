@@ -48,7 +48,8 @@ int find_syscall(char *name) {
 long long total_time = 0;
 
 void calculate_time_percent() {
-  for (int i = 0; i < syscall_num; ++i) total_time += syscalls[i].sys_time;
+  for (int i = 0; i < syscall_num; ++i) 
+    total_time += syscalls[i].sys_time;
 
   for (int i = 0; i < syscall_num; ++i)
     syscalls[i].time_percent = syscalls[i].sys_time * 100 / total_time;
