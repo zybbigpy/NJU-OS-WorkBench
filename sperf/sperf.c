@@ -23,6 +23,31 @@ typedef struct SysCallInfo {
 
 // global syscalls
 SysCallInfo syscalls[MAX_SYSCALL_NUM];
+int syscall_num = 0;
+
+int find_syscall(char *name) {
+  int ret = -1;
+  for (int i = 0; i < syscall_num; ++i)
+    if (strcmp(syscalls[i].syscall_name, name) == 0) ret = i;
+
+  return ret;
+}
+
+void add_syscall(char *name, char *time) {
+  int find_id = find_syscall(name);
+  if (find_id == -1) {
+    strcpy(syscalls[syscall_num].syscall_name, name);
+    syscall_num++;
+  } else {
+  }
+}
+
+void print_syscall() {
+  printf("the syscall num is %d. \n", syscall_num);
+  for (int i = 0; i < syscall_num; ++i) {
+    printf("sycall: %s", syscalls[i].syscall_name);
+  }
+}
 
 // child process
 void child_proc(int fd, int argc, char *argv[]) {
@@ -66,10 +91,9 @@ void parent_proc(int fd) {
       char str1[BUFFER_LEN] = {0};
       char str2[BUFFER_LEN] = {0};
 
-      strncpy(str1, buf + mat[1].rm_so, mat[1].rm_eo - mat[1].rm_so);
-      strncpy(str2, buf + mat[2].rm_so, mat[2].rm_eo - mat[2].rm_so);
-      puts(str1);
-      puts(str2);
+      strncpy(str1, buf + mat[1].rm_so, mat[1].rm_eo - mat[1].rm_so);  // name
+      strncpy(str2, buf + mat[2].rm_so, mat[2].rm_eo - mat[2].rm_so);  // time
+      add_syscall(str1, str2);
     }
   }
 }
