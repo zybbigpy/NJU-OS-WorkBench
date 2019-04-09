@@ -61,7 +61,8 @@ void add_syscall(char *name, char *time) {
 void print_syscall() {
   printf("the syscall num is %d. \n", syscall_num);
   for (int i = 0; i < syscall_num; ++i) {
-    printf("sycall: %s\n", syscalls[i].syscall_name);
+    printf("sycall: %s, time %lld\n", syscalls[i].syscall_name,
+    syscalls[i].sys_time);
   }
 }
 
