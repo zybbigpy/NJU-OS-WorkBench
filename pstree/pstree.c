@@ -51,7 +51,7 @@ int FillSysProcInfo(
     //        &sys_porcs[*proc_index].ppid, &sys_porcs[*proc_index].pgrp);
     char buf[MAX_FILE_ADDR_LEN];
     fgets(buf, MAX_FILE_ADDR_LEN, fp);
-    puts(buf);
+    //puts(buf);
 
     char *lh = buf;
     char *rh = buf;
@@ -311,7 +311,7 @@ int main(int argc, char *argv[]) {
   }
 
   BuildPstree(root, sys_porcs);
-  PrintPstree(root);
+  //PrintPstree(root);
   DestroyPstree(root);
   exit(EXIT_SUCCESS);
 }
