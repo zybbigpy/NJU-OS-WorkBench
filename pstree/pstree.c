@@ -54,7 +54,7 @@ int FillSysProcInfo(
     puts(buf);
 
     char *lh = buf;
-    char *rh = buf+MAX_FILE_ADDR_LEN-1;
+    char *rh = buf+30;
     while (*lh) {
       if (*lh == '(') break;
       ++lh;
