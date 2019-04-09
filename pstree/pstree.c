@@ -33,7 +33,7 @@ static const struct option long_options[] = {
 typedef struct ProcInfo {
   pid_t pid;
   char comm[50];
-  char state[4];
+  char state;
   pid_t ppid;
   pid_t pgrp;
   int level;  // the child level in the pstree
@@ -47,11 +47,11 @@ int FillSysProcInfo(
     int *proc_index) {  // the file address is always /proc/[pid]/stat
   FILE *fp = fopen(file_addr, "r");
   if (fp) {
-    fscanf(fp, "%d%s%s%d%d", &sys_porcs[*proc_index].pid,
-           sys_porcs[*proc_index].comm, sys_porcs[*proc_index].state,
+    fscanf(fp, "%d%s%c%d%d", &sys_porcs[*proc_index].pid,
+           sys_porcs[*proc_index].comm, &sys_porcs[*proc_index].state,
            &sys_porcs[*proc_index].ppid, &sys_porcs[*proc_index].pgrp);
     
-    printf("Read info [%d %s %s %d %d]\n",sys_porcs[*proc_index].pid,
+    printf("Read info [%d %s %c %d %d]\n",sys_porcs[*proc_index].pid,
            sys_porcs[*proc_index].comm, sys_porcs[*proc_index].state,
            sys_porcs[*proc_index].ppid, sys_porcs[*proc_index].pgrp );
   } else {
