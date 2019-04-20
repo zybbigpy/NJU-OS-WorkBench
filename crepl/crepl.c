@@ -16,6 +16,7 @@ char* read_line(char* strin) {
   if (ret == NULL) {
     error("fgets()");
   }
+  printf("%s\n", ret);
   return ret;
 }
 
@@ -28,8 +29,11 @@ int main() {
   while (1) {
     read_line(strin);
     if (strcmp(strin, "exit\n")) {
+      printf("in the exit\n");
       exit(EXIT_SUCCESS);
     } else if (strcmp(strin, "\n")) {
+      
+      printf("in the newline\n");
       continue;
     } else if (is_func(strin)) {
       printf("in the fuction\n");
