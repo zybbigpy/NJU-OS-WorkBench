@@ -25,13 +25,16 @@ int is_expr() { return 0; }
 
 int main() {
   char strin[MAX_LINE_SIZE] = {0};
-  while (read_line(strin)) {
+  while (1) {
+    read_line(strin);
     if (strcmp(strin, "exit\n")) {
       exit(EXIT_SUCCESS);
     } else if (strcmp(strin, "\n")) {
       continue;
     } else if (is_func(strin)) {
+      printf("in the fuction\n");
     } else if (is_expr(strin)) {
+      printf("in the expression \n");
     }
   }
 }
