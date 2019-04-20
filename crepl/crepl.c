@@ -9,19 +9,19 @@ void error(const char* msg) {
   exit(EXIT_FAILURE);
 }
 
-int read_line(char *strin) {
+int read_line(char* strin) {
   // print promt
   printf(">> ");
-  int ret = fgets(strin, (int)MAX_LINE_SIZE, stdin);
-  if(ret == 0) {
+  char* ret = fgets(strin, (int)MAX_LINE_SIZE, stdin);
+  if (ret == NULL) {
     error("fgets()");
   }
   return ret;
 }
 
-int is_func() {return 0;}
+int is_func() { return 0; }
 
-int is_expr() {return 0;}
+int is_expr() { return 0; }
 
 int main() {
   char strin[MAX_LINE_SIZE] = {0};
