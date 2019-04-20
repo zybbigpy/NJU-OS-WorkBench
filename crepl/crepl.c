@@ -28,7 +28,7 @@ int main() {
   while (1) {
     read_line(strin);
     printf("strin is %s\n", strin);
-    if (strcmp(strin, "exit\n")) {
+    if (strcmp(strin, "exit\n") == 0) {
       printf("in the exit\n");
       exit(EXIT_SUCCESS);
     } else if (strcmp(strin, "\n")) {
