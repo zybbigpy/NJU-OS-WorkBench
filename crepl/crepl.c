@@ -12,16 +12,16 @@ void error(const char* msg) {
 int read_line(char *strin) {
   // print promt
   printf(">> ");
-  int ret = fgets(strin, MAX_LINE_SIZE, stdin);
+  int ret = fgets(strin, (int)MAX_LINE_SIZE, stdin);
   if(ret == 0) {
     error("fgets()");
   }
   return ret;
 }
 
-int is_func() {}
+int is_func() {return 0;}
 
-int is_expr() {}
+int is_expr() {return 0;}
 
 int main() {
   char strin[MAX_LINE_SIZE] = {0};
