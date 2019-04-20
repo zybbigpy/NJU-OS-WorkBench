@@ -27,7 +27,7 @@ int main() {
   char strin[MAX_LINE_SIZE] = {0};
   while (1) {
     read_line(strin);
-    printf("strin is %s\n", strin);
+    // printf("strin is %s\n", strin);
     if (strcmp(strin, "exit\n") == 0) {
       printf("in the exit\n");
       exit(EXIT_SUCCESS);
