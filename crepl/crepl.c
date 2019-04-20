@@ -9,7 +9,7 @@ void error(const char* msg) {
   exit(EXIT_FAILURE);
 }
 
-int read_line(char* strin) {
+char* read_line(char* strin) {
   // print promt
   printf(">> ");
   char* ret = fgets(strin, (int)MAX_LINE_SIZE, stdin);
