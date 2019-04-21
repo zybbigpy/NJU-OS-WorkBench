@@ -63,7 +63,7 @@ void compile(const char* strin) {
   }
 
   void* handler = dlopen(so_file_path, RTLD_GLOBAL | RTLD_LAZY);
-  assert(handler == NULL);
+  assert(handler);
   dynamic_lib_handlers[dynamic_lib_id++] = handler;
 }
 
@@ -85,6 +85,7 @@ int is_expr(const char* strin) {  // two cases: expr or func
 }
 
 void cleanup() {
+  // remove temp dir
   char cmd[MAX_LINE_SIZE];
   sprintf(cmd, "rm -r %s", template);
   if (system(cmd)) {
@@ -93,7 +94,7 @@ void cleanup() {
 }
 
 int main() {
-  // atexit(cleanup);
+  atexit(cleanup);
   if (!mkdtemp(template)) {
     error("error in mkdtemp()");
   }
