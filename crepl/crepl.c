@@ -3,42 +3,68 @@
 #include <string.h>
 
 #define MAX_LINE_SIZE 1024
+#define MAX_LIB_NUM 256
+
+
+static int dynamic_lib_id = 0;
+static void* dynamic_lib_handlers[MAX_LIB_NUM];
+
+// temp dir for .so and .c files
+char temp_dir[] = "./temp/cprel_XXXXXX";
 
 void error(const char* msg) {
   perror(msg);
   exit(EXIT_FAILURE);
 }
 
-char* read_line(char* strin) {
+char* read_line(char* strin) {// getline from stdin
   // print promt
   printf(">> ");
-  char* ret = fgets(strin, (int)MAX_LINE_SIZE, stdin);
+  char* ret = fgets(strin, MAX_LINE_SIZE, stdin);
   if (ret == NULL) {
     error("fgets()");
   }
   return ret;
 }
 
-int is_func() { return 0; }
+int compile(const char *strin) {
+}
 
-int is_expr() { return 0; }
+int compute(const char *strin) {
+
+}
+
+int is_func(const char* strin) { // only for funcs like int func();
+  char prefix[] = "int ";
+  int ret = 0;
+  if (strncmp(strin, prefix, strlen(prefix)) == 0) ret = 1;
+  return ret;
+}
+
+int is_expr(const char* strin) { // two cases: expr or func
+  return !is_func(strin);
+}
 
 int main() {
+  if(!mkdtemp(temp_dir)) {
+    error("mkdtemp()");
+  }
+
   char strin[MAX_LINE_SIZE] = {0};
   while (1) {
     read_line(strin);
-    // printf("strin is %s\n", strin);
     if (strcmp(strin, "exit\n") == 0) {
-      printf("in the exit\n");
+      // printf("in the exit\n");
       exit(EXIT_SUCCESS);
     } else if (strcmp(strin, "\n")) {
-      
-      printf("in the ne wline\n");
+      // printf("in the newline\n");
       continue;
     } else if (is_func(strin)) {
-      printf("in the fuction\n");
+      // printf("in the fuction\n");
+      compile(strin);
     } else if (is_expr(strin)) {
-      printf("in the expression \n");
+      // printf("in the expression \n");
+      compute(strin);
     }
   }
 }
