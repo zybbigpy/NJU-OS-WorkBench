@@ -105,7 +105,7 @@ int main() {
     if (strcmp(strin, "exit\n") == 0) {
       // printf("in the exit\n");
       exit(EXIT_SUCCESS);
-    } else if (strcmp(strin, "\n")) {
+    } else if (strcmp(strin, "\n") == 0) {
       printf("in the newline\n");
       continue;
     } else if (is_func(strin)) {
