@@ -5,9 +5,8 @@
 #define MAX_LINE_SIZE 1024
 #define MAX_LIB_NUM 256
 
-
-static int dynamic_lib_id = 0;
-static void* dynamic_lib_handlers[MAX_LIB_NUM];
+//static int dynamic_lib_id = 0;
+//static void* dynamic_lib_handlers[MAX_LIB_NUM];
 
 // temp dir for .so and .c files
 char temp_dir[] = "./temp/cprel_XXXXXX";
@@ -17,7 +16,7 @@ void error(const char* msg) {
   exit(EXIT_FAILURE);
 }
 
-char* read_line(char* strin) {// getline from stdin
+char* read_line(char* strin) {  // getline from stdin
   // print promt
   printf(">> ");
   char* ret = fgets(strin, MAX_LINE_SIZE, stdin);
@@ -27,26 +26,23 @@ char* read_line(char* strin) {// getline from stdin
   return ret;
 }
 
-int compile(const char *strin) {
-}
+void compile(const char* strin) {}
 
-int compute(const char *strin) {
+void compute(const char* strin) {}
 
-}
-
-int is_func(const char* strin) { // only for funcs like int func();
+int is_func(const char* strin) {  // only for funcs like int func();
   char prefix[] = "int ";
   int ret = 0;
   if (strncmp(strin, prefix, strlen(prefix)) == 0) ret = 1;
   return ret;
 }
 
-int is_expr(const char* strin) { // two cases: expr or func
+int is_expr(const char* strin) {  // two cases: expr or func
   return !is_func(strin);
 }
 
 int main() {
-  if(!mkdtemp(temp_dir)) {
+  if (!mkdtemp(temp_dir)) {
     error("mkdtemp()");
   }
 
