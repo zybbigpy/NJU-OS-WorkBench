@@ -24,7 +24,6 @@ void error(const char* msg) {
 char* read_line(char* strin) {  // getline from stdin
   printf(">> ");
   char* ret = fgets(strin, MAX_LINE_SIZE, stdin);
-  // printf(" the string in is %s\n", strin);
   if (ret == NULL) {
     error("fgets()");
   }
@@ -71,11 +70,7 @@ void compile(const char* strin) {
 void compute(const char* strin) {}
 
 int is_func(const char* strin) {  // only for funcs like int func();
-  printf("the strin is %s\n", strin);
   char prefix[] = "int ";
-  int len = (int)strlen(prefix);
-  printf(" the prefix len is %d\n", len);
-
   int ret = 0;
   if (strncmp(strin, prefix, strlen(prefix)) == 0) ret = 1;
   return ret;
@@ -87,6 +82,7 @@ int is_expr(const char* strin) {  // two cases: expr or func
 
 void cleanup() {
   // remove temp dir
+  printf(" in the clean up func\n");
   char cmd[MAX_LINE_SIZE];
   sprintf(cmd, "rm -r %s", template);
   if (system(cmd)) {
