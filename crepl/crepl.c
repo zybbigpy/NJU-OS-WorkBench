@@ -33,7 +33,6 @@ char* read_line(char* strin) {  // getline from stdin
 }
 
 void* compile(const char* strin) {
-  printf("in the compile func\n");
   char c_file_path[MAX_LINE_SIZE];
   char so_file_path[MAX_LINE_SIZE];
 
@@ -57,7 +56,7 @@ void* compile(const char* strin) {
                      "-Wno-implicit-function-declaration", "-o", so_file_path,
                      c_file_path, (char*)NULL);
     if (ret == -1) {
-      error("in gcc compile");
+      error("error in gcc compile");
     }
   } else {  // parent: wait for compile finish
     wait(NULL);
