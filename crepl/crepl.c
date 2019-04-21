@@ -115,7 +115,10 @@ int main() {
   if (!mkdtemp(temp_dir)) {
     error("error in mkdtemp()");
   }
-  // printf(" the temp dir name is %s\n", temp_dir);
+
+  printf(
+      "This is crepl v0.1. type `exit` to exit.\n"
+      "Attension: MAX LINE SIZE you can type in is 1024.\n");
 
   char strin[MAX_LINE_SIZE] = {0};
   while (1) {
@@ -123,13 +126,13 @@ int main() {
     if (strcmp(strin, "exit\n") == 0) {
       exit(EXIT_SUCCESS);
     } else if (strcmp(strin, "\n") == 0) {
-      printf("in the newline\n");
+      // printf("in the newline\n");
       continue;
     } else if (is_func(strin)) {
-      printf("in the fuction\n");
+      // printf("in the fuction\n");
       compile(strin);
     } else if (is_expr(strin)) {
-      printf("in the expression \n");
+      // printf("in the expression \n");
       compute(strin);
     }
   }
