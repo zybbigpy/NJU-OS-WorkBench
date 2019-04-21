@@ -81,7 +81,7 @@ void compute(const char* strin) {
   void* handler = compile(c_code);
   if (handler) {
     func_ptr func = dlsym(handler, func_name);
-    printf("%d", func());
+    printf("%d\n", func());
   }
 }
 
