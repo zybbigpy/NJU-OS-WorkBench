@@ -5,8 +5,8 @@
 #define MAX_LINE_SIZE 1024
 #define MAX_LIB_NUM 256
 
-//static int dynamic_lib_id = 0;
-//static void* dynamic_lib_handlers[MAX_LIB_NUM];
+// static int dynamic_lib_id = 0;
+// static void* dynamic_lib_handlers[MAX_LIB_NUM];
 
 // temp dir for .so and .c files
 // char temp_dir[] = "./temp/cprel_XXXXXX";
@@ -41,9 +41,9 @@ int is_expr(const char* strin) {  // two cases: expr or func
   return !is_func(strin);
 }
 
+char template[] = "./template-XXXXXX";
 int main() {
-  char template[] = "./template-XXXXXX";
-  char*ret =mkdtemp(template);
+  char* ret = mkdtemp(template);
   if (!ret) {
     error("error in mkdtemp()");
   }
