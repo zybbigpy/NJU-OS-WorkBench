@@ -10,11 +10,13 @@
 #define MAX_LINE_SIZE 1024
 #define MAX_LIB_NUM 256
 
+typedef int (*func_ptr)();
+
 static int dynamic_lib_id = 0;
 static void* dynamic_lib_handlers[MAX_LIB_NUM];
 
 // temp dir for .so and .c files
-static char template[] = "./crepl-tmp-XXXXXX";
+static char temp_dir[] = "./crepl-tmp-XXXXXX";
 
 void error(const char* msg) {
   perror(msg);
@@ -30,14 +32,14 @@ char* read_line(char* strin) {  // getline from stdin
   return ret;
 }
 
-void compile(const char* strin) {
+void* compile(const char* strin) {
   printf("in the compile func\n");
   char c_file_path[MAX_LINE_SIZE];
   char so_file_path[MAX_LINE_SIZE];
 
   // create file path
-  sprintf(c_file_path, "%s/crep%d.c", template, dynamic_lib_id);
-  sprintf(so_file_path, "%s/libcrep%d.so", template, dynamic_lib_id);
+  sprintf(c_file_path, "%s/crep%d.c", temp_dir, dynamic_lib_id);
+  sprintf(so_file_path, "%s/libcrep%d.so", temp_dir, dynamic_lib_id);
 
   FILE* fp = fopen(c_file_path, "w");
   if (!fp) {
@@ -65,9 +67,23 @@ void compile(const char* strin) {
   if (handler) {
     dynamic_lib_handlers[dynamic_lib_id++] = handler;
   }
+
+  return handler;
 }
 
-void compute(const char* strin) {}
+void compute(const char* strin) {
+  // wrap the computation
+  char c_code[MAX_LINE_SIZE];
+  char func_name[MAX_LINE_SIZE];
+  sprintf(func_name, "__expr_wrap_%d", dynamic_lib_id);
+  sprintf(c_code, "int __expr_wrap_%d() { return %s; }", dynamic_lib_id, strin);
+
+  void* handler = compile(c_code);
+  if (handler) {
+    func_ptr func = dlsym(handler, func_name);
+    printf("%d", func());
+  }
+}
 
 int is_func(const char* strin) {  // only for funcs like int func();
   char prefix[] = "int ";
@@ -82,26 +98,29 @@ int is_expr(const char* strin) {  // two cases: expr or func
 
 void cleanup() {
   // remove temp dir
-  printf(" in the clean up func\n");
+  printf("in the clean up func\n");
   char cmd[MAX_LINE_SIZE];
-  sprintf(cmd, "rm -r %s", template);
+  sprintf(cmd, "rm -rf %s", temp_dir);
   if (system(cmd)) {
     error("error in remove tempdir");
+  }
+
+  for (int i = 0; i < dynamic_lib_id; ++i) {
+    dlclose(dynamic_lib_handlers[i]);
   }
 }
 
 int main() {
   atexit(cleanup);
-  if (!mkdtemp(template)) {
+  if (!mkdtemp(temp_dir)) {
     error("error in mkdtemp()");
   }
-  // printf(" the temp dir name is %s\n", template);
+  // printf(" the temp dir name is %s\n", temp_dir);
 
   char strin[MAX_LINE_SIZE] = {0};
   while (1) {
     read_line(strin);
     if (strcmp(strin, "exit\n") == 0) {
-      // printf("in the exit\n");
       exit(EXIT_SUCCESS);
     } else if (strcmp(strin, "\n") == 0) {
       printf("in the newline\n");
