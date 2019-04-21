@@ -41,7 +41,7 @@ int is_expr(const char* strin) {  // two cases: expr or func
   return !is_func(strin);
 }
 
-char template[] = "./template-XXXXXX";
+char template[] = "./temp/template-XXXXXX";
 int main() {
   char* ret = mkdtemp(template);
   if (!ret) {
