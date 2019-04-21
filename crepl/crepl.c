@@ -31,6 +31,7 @@ char* read_line(char* strin) {  // getline from stdin
 }
 
 void compile(const char* strin) {
+  printf("in the compile func\n");
   char c_file_path[MAX_LINE_SIZE];
   char so_file_path[MAX_LINE_SIZE];
 
@@ -103,7 +104,7 @@ int main() {
       // printf("in the newline\n");
       continue;
     } else if (is_func(strin)) {
-      // printf("in the fuction\n");
+      printf("in the fuction\n");
       compile(strin);
     } else if (is_expr(strin)) {
       // printf("in the expression \n");
