@@ -53,18 +53,19 @@ void compile(const char* strin) {
   }
   if (pid == 0) {  // child: compile
     int ret = execlp("gcc", "gcc", "-fPIC", "-shared",
-           "-Wno-implicit-function-declaration", "-o", so_file_path,
-           c_file_path, (char*)NULL);
-    if(ret  == -1) {
-    error("in gcc compile");
+                     "-Wno-implicit-function-declaration", "-o", so_file_path,
+                     c_file_path, (char*)NULL);
+    if (ret == -1) {
+      error("in gcc compile");
     }
-  } else { // parent: wait for compile finish
+  } else {  // parent: wait for compile finish
     wait(NULL);
   }
 
   void* handler = dlopen(so_file_path, RTLD_GLOBAL | RTLD_LAZY);
-  assert(handler);
-  dynamic_lib_handlers[dynamic_lib_id++] = handler;
+  if (handler) {
+    dynamic_lib_handlers[dynamic_lib_id++] = handler;
+  }
 }
 
 void compute(const char* strin) {}
@@ -72,8 +73,8 @@ void compute(const char* strin) {}
 int is_func(const char* strin) {  // only for funcs like int func();
   printf("the strin is %s\n", strin);
   char prefix[] = "int ";
-  int  len =(int ) strlen(prefix);
-  printf(" the prefix len is %d\n",len);
+  int len = (int)strlen(prefix);
+  printf(" the prefix len is %d\n", len);
 
   int ret = 0;
   if (strncmp(strin, prefix, strlen(prefix)) == 0) ret = 1;
