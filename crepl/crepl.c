@@ -24,6 +24,7 @@ void error(const char* msg) {
 char* read_line(char* strin) {  // getline from stdin
   printf(">> ");
   char* ret = fgets(strin, MAX_LINE_SIZE, stdin);
+  printf(" the string in is %s\n", strin);
   if (ret == NULL) {
     error("fgets()");
   }
