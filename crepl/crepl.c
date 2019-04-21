@@ -107,7 +107,7 @@ int main() {
       printf("in the fuction\n");
       compile(strin);
     } else if (is_expr(strin)) {
-      // printf("in the expression \n");
+      printf("in the expression \n");
       compute(strin);
     }
   }
