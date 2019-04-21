@@ -43,7 +43,7 @@ int is_expr(const char* strin) {  // two cases: expr or func
 
 int main() {
   char template[] = "template-XXXXXX";
-  char*ret =mktemp(template);
+  char*ret =mkdtemp(template);
   if (!ret) {
     error("error in mkdtemp()");
   }
