@@ -80,7 +80,7 @@ void compute(const char* strin) {
   void* handler = compile(c_code);
   if (handler) {
     func_ptr func = dlsym(handler, func_name);
-    printf("%s = %d\n", strin, func());
+    printf(">> [crepl] = %d\n", func());
   }
 }
 
@@ -97,7 +97,7 @@ int is_expr(const char* strin) {  // two cases: expr or func
 
 void cleanup() {
   // remove temp dir
-  // printf("in the clean up func\n");
+  //  printf("in the clean up func\n");
   char cmd[MAX_LINE_SIZE];
   sprintf(cmd, "rm -rf %s", temp_dir);
   if (system(cmd)) {
