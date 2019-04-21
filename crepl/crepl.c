@@ -72,7 +72,7 @@ int is_func(const char* strin) {  // only for funcs like int func();
   printf("the strin is %s\n", strin);
   char prefix[] = "int ";
   size_t len = strlen(prefix);
-  printf(" the prefix len is %d\n",len);
+  printf(" the prefix len is %ld\n",len);
 
   int ret = 0;
   if (strncmp(strin, prefix, strlen(prefix)) == 0) ret = 1;
