@@ -42,7 +42,7 @@ void compile(const char* strin) {
   if (!fp) {
     error("error in open .c file");
   }
-  fprintf(fp, strin);
+  fprintf(fp, "%s", strin);
   fclose(fp);
 
   pid_t pid = fork();
