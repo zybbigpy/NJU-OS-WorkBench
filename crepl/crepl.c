@@ -41,10 +41,20 @@ int is_expr(const char* strin) {  // two cases: expr or func
   return !is_func(strin);
 }
 
+void cleanup() {
+  char cmd[MAX_LINE_SIZE];
+  sprintf(cmd, "rm -r %s", template);
+  if(!system(cmd)) {
+    error("error in remove tempdir");
+  }
+}
+
 int main() {
+  atexit(cleanup);
   if (!mkdtemp(template)) {
     error("error in mkdtemp()");
   }
+  printf(" the temp dir name is %s\n", template);
 
   char strin[MAX_LINE_SIZE] = {0};
   while (1) {
