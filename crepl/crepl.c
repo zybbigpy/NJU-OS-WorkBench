@@ -9,7 +9,7 @@
 //static void* dynamic_lib_handlers[MAX_LIB_NUM];
 
 // temp dir for .so and .c files
-char temp_dir[] = "/temp/cprel_XXXXXX";
+// char temp_dir[] = "./temp/cprel_XXXXXX";
 
 void error(const char* msg) {
   perror(msg);
@@ -42,7 +42,9 @@ int is_expr(const char* strin) {  // two cases: expr or func
 }
 
 int main() {
-  if (!mkdtemp(temp_dir)) {
+  char template[] = "template-XXXXXX";
+  char*ret =mktemp(template);
+  if (!ret) {
     error("error in mkdtemp()");
   }
 
