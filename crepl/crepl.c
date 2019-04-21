@@ -24,7 +24,7 @@ void error(const char* msg) {
 char* read_line(char* strin) {  // getline from stdin
   printf(">> ");
   char* ret = fgets(strin, MAX_LINE_SIZE, stdin);
-  printf(" the string in is %s\n", strin);
+  // printf(" the string in is %s\n", strin);
   if (ret == NULL) {
     error("fgets()");
   }
@@ -106,7 +106,7 @@ int main() {
       // printf("in the exit\n");
       exit(EXIT_SUCCESS);
     } else if (strcmp(strin, "\n")) {
-      // printf("in the newline\n");
+      printf("in the newline\n");
       continue;
     } else if (is_func(strin)) {
       printf("in the fuction\n");
