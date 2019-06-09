@@ -42,9 +42,11 @@ int kvdb_put(kvdb_t *db, const char *key, const char *value) {
 
 // thread safe kvdb get
 char *kvdb_get(kvdb_t *db, const char *key) {
-  pthread_mutex_lock(&db->thread_lock);
+
+  // there is no need to add mutex for read
+  // pthread_mutex_lock(&db->thread_lock);
   char *ret = kvdb_get_thread_unsafe(db, key);
-  pthread_mutex_unlock(&db->thread_lock);
+  // pthread_mutex_unlock(&db->thread_lock);
   return ret;
 }
 
@@ -187,7 +189,8 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
   int file_fd = db->db_file->_fileno;
   size_t key_size = 0;
   size_t val_size = 0;
-  char *key_buf, *val_buf;
+  char *key_buf = NULL;
+  char *val_buf = NULL;
 
   if (lseek(file_fd, 0, SEEK_SET) == -1) {
     log_error("error in get_lseek.\n");
@@ -211,19 +214,12 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
       return NULL;
     }
 
+    assert(key_buf == NULL);
+    assert(val_buf == NULL);
     key_buf = (char *)malloc(key_size + 1);
     val_buf = (char *)malloc(val_size + 1);
-
-    if (key_buf == NULL) {
-      log_error("key buf malloc error in get. \n");
-      return NULL;
-    }
-
-    if (val_buf == NULL) {
-      log_error("val buf malloc error in get. \n");
-      free(key_buf);
-      return NULL;
-    }
+    assert(key_buf);
+    assert(val_buf);
 
     if (read(file_fd, key_buf, key_size) != key_size) {
       log_error("read key error in get. \n");
@@ -248,7 +244,7 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
     }
   }
 
+  assert(key_buf != NULL);
   free(key_buf);
-  assert(key_buf == NULL);
   return val_buf;
 }
