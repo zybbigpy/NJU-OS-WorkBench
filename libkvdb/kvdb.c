@@ -42,7 +42,7 @@ int kvdb_put(kvdb_t *db, const char *key, const char *value) {
 // thread safe kvdb get
 char *kvdb_get(kvdb_t *db, const char *key) {
   pthread_mutex_lock(&db->thread_lock);
-  int ret = kvdb_get_thread_unsafe(db, key);
+  char* ret = kvdb_get_thread_unsafe(db, key);
   pthread_mutex_unlock(&db->thread_lock);
   return ret;
 }
@@ -142,5 +142,11 @@ int kvdb_close_thread_unsafe(kvdb_t *db) {
 }
 
 int kvdb_put_thread_unsafe(kvdb_t *db, const char *key, const char *value) {
+  kvdb_lock(db);
 
+
+
+
+  kvdb_unlock(db);
+  return 0;
 }
