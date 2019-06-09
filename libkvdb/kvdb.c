@@ -210,8 +210,8 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
       log_error("read val size error in get. \n");
       return NULL;
     }
-
-    if (key_buf = (char *)malloc(key_size + 1) == NULL) {
+    key_buf = (char *)malloc(key_size + 1);
+    if ( key_buf == NULL) {
       log_error("key buf malloc error in get. \n");
       return NULL;
     }
