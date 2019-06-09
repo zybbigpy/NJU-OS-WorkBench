@@ -151,7 +151,7 @@ int kvdb_put_thread_unsafe(kvdb_t *db, const char *key, const char *value) {
   assert(db->db_log);
 
   int file_fd = db->db_file->_fileno;
-  int log_fd = db->db_log->_fileno;
+  // int log_fd = db->db_log->_fileno;
 
   // log begin
 
