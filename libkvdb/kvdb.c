@@ -210,13 +210,16 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
       log_error("read val size error in get. \n");
       return NULL;
     }
+
     key_buf = (char *)malloc(key_size + 1);
-    if ( key_buf == NULL) {
+    val_buf = (char *)malloc(val_size + 1);
+
+    if (key_buf == NULL) {
       log_error("key buf malloc error in get. \n");
       return NULL;
     }
 
-    if (val_buf = (char *)malloc(val_size + 1) == NULL) {
+    if (val_buf == NULL) {
       log_error("val buf malloc error in get. \n");
       free(key_buf);
       return NULL;
@@ -237,7 +240,7 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
     }
 
     if (strcmp(key, key_buf) == 0) {
-      val_buf[val_size] ='\0';
+      val_buf[val_size] = '\0';
       break;
     } else {
       free(val_buf);
