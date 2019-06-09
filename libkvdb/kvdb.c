@@ -336,7 +336,6 @@ int kvdb_check(kvdb_t *db) {
 
   if (flag == LOG_BGN) {
     log_error("lose last record.\n");
-    return 0;
   }
   if (flag == LOG_COMMIT) {
     log_debug("begin recover the db.\n");
@@ -344,8 +343,8 @@ int kvdb_check(kvdb_t *db) {
       log_error("error in db recovery. \n");
       return -1;
     }
-    return 0;
   }
+  return 0;
 }
 
 int kvdb_recover(kvdb_t *db) {
