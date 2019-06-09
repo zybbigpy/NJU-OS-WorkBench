@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <fcntl.h>
+#include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -42,7 +43,7 @@ int kvdb_put(kvdb_t *db, const char *key, const char *value) {
 // thread safe kvdb get
 char *kvdb_get(kvdb_t *db, const char *key) {
   pthread_mutex_lock(&db->thread_lock);
-  char* ret = kvdb_get_thread_unsafe(db, key);
+  char *ret = kvdb_get_thread_unsafe(db, key);
   pthread_mutex_unlock(&db->thread_lock);
   return ret;
 }
@@ -83,11 +84,13 @@ int unlock(int fd) {
   return fcntl(fd, F_SETLKW, &lock);
 }
 
+// success return 0
 int kvdb_lock(kvdb_t *db) {
   return write_lock_wait(db->db_file->_fileno) +
          write_lock_wait(db->db_log->_fileno);
 }
 
+// success return 0
 int kvdb_unlock(kvdb_t *db) {
   return unlock(db->db_file->_fileno) + unlock(db->db_log->_fileno);
 }
@@ -143,10 +146,106 @@ int kvdb_close_thread_unsafe(kvdb_t *db) {
 
 int kvdb_put_thread_unsafe(kvdb_t *db, const char *key, const char *value) {
   kvdb_lock(db);
+  assert(db);
+  assert(db->db_file);
+  assert(db->db_log);
 
+  int file_fd = db->db_file->_fileno;
+  int log_fd = db->db_log->_fileno;
 
+  // log begin
 
+  // log commit
+
+  // db write
+  size_t key_size = strlen(key);
+  size_t val_size = strlen(value);
+  if (write(file_fd, &key_size, sizeof(key_size)) != sizeof(key_size)) {
+    return -1;
+  }
+  if (write(file_fd, &val_size, sizeof(val_size)) != sizeof(val_size)) {
+    return -1;
+  }
+  if (write(file_fd, key, strlen(key)) != strlen(key)) {
+    return -1;
+  }
+  if (write(file_fd, value, strlen(value)) != strlen(value)) {
+    return -1;
+  }
+  fsync(file_fd);
+
+  // log
 
   kvdb_unlock(db);
   return 0;
+}
+
+char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
+  assert(db);
+  assert(db->db_file);
+
+  int file_fd = db->db_file->_fileno;
+  size_t key_size = 0;
+  size_t val_size = 0;
+  char *key_buf, *val_buf;
+
+  if (lseek(file_fd, 0, SEEK_SET) == -1) {
+    log_error("error in get_lseek.\n");
+    return NULL;
+  }
+
+  while (1) {
+    ssize_t read_ret;
+    if (read_ret = read(file_fd, &key_size, sizeof(key_size)) == 0) {
+      log_error("can not find the key in db. \n");
+      return NULL;
+    }
+
+    if (read_ret != sizeof(key_size)) {
+      log_error("read key size error in get.\n");
+      return NULL;
+    }
+
+    if (read(file_fd, &val_size, sizeof(val_size)) != sizeof(val_size)) {
+      log_error("read val size error in get. \n");
+      return NULL;
+    }
+
+    if (key_buf = (char *)malloc(key_size + 1) == NULL) {
+      log_error("key buf malloc error in get. \n");
+      return NULL;
+    }
+
+    if (val_buf = (char *)malloc(val_size + 1) == NULL) {
+      log_error("val buf malloc error in get. \n");
+      free(key_buf);
+      return NULL;
+    }
+
+    if (read(file_fd, key_buf, key_size) != key_size) {
+      log_error("read key error in get. \n");
+      free(val_buf);
+      free(key_buf);
+      return NULL;
+    }
+
+    if (read(file_fd, val_buf, val_size) != val_size) {
+      log_error("read val error in get. \n");
+      free(val_buf);
+      free(val_buf);
+      return NULL;
+    }
+
+    if (strcmp(key, key_buf) == 0) {
+      val_buf[val_size] ='\0';
+      break;
+    } else {
+      free(val_buf);
+      free(key_buf);
+    }
+  }
+
+  free(key_buf);
+  assert(key_buf == NULL);
+  return val_buf;
 }
