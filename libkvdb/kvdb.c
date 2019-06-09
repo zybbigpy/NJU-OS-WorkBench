@@ -126,7 +126,7 @@ int kvdb_close_thread_unsafe(kvdb_t *db) {
     log_error("close db file error.\n");
     return -1;
   }
-  if (!fclose(db->log_fd)) {
+  if (!close(db->log_fd)) {
     log_error("close db log error.\n");
     return -1;
   }
