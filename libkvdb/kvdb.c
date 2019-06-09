@@ -88,25 +88,17 @@ int unlock(int fd) {
 
 // success return 0
 int kvdb_lock(kvdb_t *db) {
-  return write_lock_wait(db->db_file->_fileno) +
-         write_lock_wait(db->db_log->_fileno);
+  return write_lock_wait(db->file_fd) + write_lock_wait(db->log_fd);
 }
 
 // success return 0
-int kvdb_unlock(kvdb_t *db) {
-  return unlock(db->db_file->_fileno) + unlock(db->db_log->_fileno);
-}
+int kvdb_unlock(kvdb_t *db) { return unlock(db->file_fd) + unlock(db->log_fd); }
 
 int kvdb_open_thread_unsafe(kvdb_t *db, const char *filename) {
   char logname[MAX_NAME_LEN];
   sprintf(logname, "%s.log", filename);
-  db->db_file = fopen(filename, "a+");
-  db->db_file = fopen(logname, "r");
-
-  if (db->db_file == NULL || db->db_log == NULL) {
-    log_error("create db or log file error.\n");
-    return -1;
-  }
+  db->file_fd = open(filename, O_CREAT | O_RDWR, 0644);
+  db->log_fd = open(logname, O_CREAT | O_RDWR, 0644);
 
   if (!kvdb_lock(db)) {
     log_error("lock db error.\n");
@@ -128,14 +120,13 @@ int kvdb_open_thread_unsafe(kvdb_t *db, const char *filename) {
 }
 
 int kvdb_close_thread_unsafe(kvdb_t *db) {
-  assert(db->db_log);
-  assert(db->db_file);
+  assert(db);
   assert(&(db->thread_lock));
-  if (!fclose(db->db_file)) {
+  if (!close(db->file_fd)) {
     log_error("close db file error.\n");
     return -1;
   }
-  if (!fclose(db->db_log)) {
+  if (!fclose(db->log_fd)) {
     log_error("close db log error.\n");
     return -1;
   }
@@ -162,11 +153,9 @@ int kvdb_set_log(int log_fd, int flag) {
 int kvdb_put_thread_unsafe(kvdb_t *db, const char *key, const char *value) {
   kvdb_lock(db);
   assert(db);
-  assert(db->db_file);
-  assert(db->db_log);
 
-  int file_fd = db->db_file->_fileno;
-  int log_fd = db->db_log->_fileno;
+  int file_fd = db->file_fd;
+  int log_fd = db->log_fd;
 
   size_t key_size = strlen(key);
   size_t val_size = strlen(value);
@@ -216,6 +205,8 @@ int kvdb_put_thread_unsafe(kvdb_t *db, const char *key, const char *value) {
   fsync(log_fd);
 
   // db write
+  lseek(file_fd, 0, SEEK_END);
+
   if (write(file_fd, &key_size, sizeof(key_size)) != sizeof(key_size)) {
     kvdb_unlock(db);
     return -1;
@@ -248,11 +239,10 @@ int kvdb_put_thread_unsafe(kvdb_t *db, const char *key, const char *value) {
 
 char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
   assert(db);
-  assert(db->db_file);
 
   kvdb_lock(db);
 
-  int file_fd = db->db_file->_fileno;
+  int file_fd = db->file_fd;
   size_t key_size = 0;
   size_t val_size = 0;
   char *key_buf = NULL;
@@ -324,14 +314,13 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
 
 int kvdb_check(kvdb_t *db) {
   assert(db);
-  assert(db->db_log);
 
-  int log_fd = db->db_log->_fileno;
+  int log_fd = db->log_fd;
   if (lseek(log_fd, 0, SEEK_SET) == -1) {
     return -1;
   }
 
-  int flag = 0;
+  int flag = -1;
   flag = read(log_fd, &flag, sizeof(flag));
 
   if (flag == LOG_BGN) {
@@ -349,23 +338,27 @@ int kvdb_check(kvdb_t *db) {
 
 int kvdb_recover(kvdb_t *db) {
   assert(db);
-  assert(db->db_log);
-  assert(db->db_file);
 
-  int log_fd = db->db_file->_fileno;
-  int file_fd = db->db_log->_fileno;
+  int log_fd = db->file_fd;
+  int file_fd = db->log_fd;
 
-  int flag;
-  int offset;
+  int flag, offset;
   int key_size, val_size;
   char *buf;
+
+  // get the last commit info
   lseek(log_fd, 0, SEEK_SET);
   read(log_fd, &flag, sizeof(flag));
   read(log_fd, &offset, sizeof(offset));
   read(log_fd, &key_size, sizeof(key_size));
   read(log_fd, &val_size, sizeof(val_size));
   buf = (char *)malloc(val_size + key_size);
+  read(log_fd, buf, key_size + val_size);
+
+  // recover the last commit
   lseek(file_fd, offset, SEEK_SET);
+  write(file_fd, &key_size, sizeof(val_size));
+  write(file_fd, &val_size, sizeof(val_size));
   write(file_fd, buf, key_size + val_size);
   fsync(file_fd);
 

@@ -7,8 +7,8 @@
 #define MAX_NAME_LEN 1024
 
 struct kvdb {
-    FILE* db_file;
-    FILE* db_log;
+    int file_fd;
+    int log_fd;
     char name[1024];
     pthread_mutex_t thread_lock;
 };
