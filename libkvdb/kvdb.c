@@ -292,7 +292,7 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
     if (read(file_fd, val_buf, val_size) != val_size) {
       log_error("read val error in get. \n");
       free(val_buf);
-      free(val_buf);
+      free(key_buf);
       kvdb_unlock(db);
       return NULL;
     }
@@ -308,6 +308,7 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
 
   assert(key_buf != NULL);
   free(key_buf);
+  assert(key_buf == NULL);
   kvdb_unlock(db);
   return val_buf;
 }
