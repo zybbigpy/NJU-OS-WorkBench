@@ -15,9 +15,7 @@ int main() {
   printf("key is %s, and the value is %s.\n", "os", value2);
 
   int fd = (&db)->log_fd;
-  int log_status = -1;
   lseek(fd, 0, SEEK_SET);
-  printf("the log status is %d \n", log_status);
   free(value1);
   free(value2);
   //   int pid = fork();
