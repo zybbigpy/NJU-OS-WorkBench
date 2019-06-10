@@ -100,21 +100,21 @@ int kvdb_open_thread_unsafe(kvdb_t *db, const char *filename) {
   db->file_fd = open(filename, O_CREAT | O_RDWR, 0644);
   db->log_fd = open(logname, O_CREAT | O_RDWR, 0644);
 
-  if (!kvdb_lock(db)) {
-    log_error("lock db error.\n");
-    return -1;
-  }
+  // if (!kvdb_lock(db)) {
+  //   log_error("lock db error.\n");
+  //   return -1;
+  // }
 
-  if (!kvdb_check(db)) {
-    log_error("check db error\n");
-    kvdb_unlock(db);
-    return -1;
-  }
+  // if (!kvdb_check(db)) {
+  //   log_error("check db error\n");
+  //   kvdb_unlock(db);
+  //   return -1;
+  // }
 
-  if (!kvdb_unlock(db)) {
-    log_error("unlock db error.\n");
-    return -1;
-  }
+  // if (!kvdb_unlock(db)) {
+  //   log_error("unlock db error.\n");
+  //   return -1;
+  // }
 
   return 0;
 }
