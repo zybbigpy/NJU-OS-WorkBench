@@ -54,17 +54,17 @@ char *kvdb_get(kvdb_t *db, const char *key) {
   return ret;
 }
 
-// block read lock
-int read_lock_wait(int fd) {
-  struct flock lock;
-  lock.l_len = 0;
-  lock.l_pid = getpid();
-  lock.l_start = 0;
-  lock.l_type = F_WRLCK;
-  lock.l_whence = SEEK_SET;
+// block read lock (there is no need)
+// int read_lock_wait(int fd) {
+//   struct flock lock;
+//   lock.l_len = 0;
+//   lock.l_pid = getpid();
+//   lock.l_start = 0;
+//   lock.l_type = F_WRLCK;
+//   lock.l_whence = SEEK_SET;
 
-  return fcntl(fd, F_SETLKW, &lock);
-}
+//   return fcntl(fd, F_SETLKW, &lock);
+// }
 
 // block write lock
 int write_lock_wait(int fd) {
@@ -244,18 +244,16 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
   int file_fd = db->file_fd;
   size_t key_size = 0;
   size_t val_size = 0;
-  // char *key_buf = NULL;
-  // char *val_buf = NULL;
 
   if (lseek(file_fd, 0, SEEK_SET) == -1) {
     log_error("error in get_lseek.\n");
     kvdb_unlock(db);
     return NULL;
   }
-  printf("before seek the key is [%s]\n", key);
+
   while (1) {
     ssize_t read_ret = read(file_fd, &key_size, sizeof(key_size));
-    printf("key size is [%d] \n", (int)key_size);
+    // printf("key size is [%d] \n", (int)key_size);
 
     if (read_ret == 0) {
       log_error("can not find the key in db. \n");
@@ -274,12 +272,12 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
       kvdb_unlock(db);
       return NULL;
     }
-    printf("val size is [%d] \n", (int)val_size);
+    // printf("val size is [%d] \n", (int)val_size);
 
     // assert(key_buf == NULL);
     // assert(val_buf == NULL);
-    char *key_buf = (char *)malloc(key_size + 1);
-    char *val_buf = (char *)malloc(val_size + 1);
+    char *key_buf = (char *)malloc(key_size);
+    char *val_buf = (char *)malloc(val_size);
     assert(key_buf);
     assert(val_buf);
 
@@ -300,12 +298,12 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
     }
     key_buf[key_size] = '\0';
     val_buf[val_size] = '\0';
-    printf("the keyfnd is [%s]\t", key_buf);
-    printf("the valfnd is [%s]\n", val_buf);
+    // printf("the keyfnd is [%s]\t", key_buf);
+    // printf("the valfnd is [%s]\n", val_buf);
     if (strcmp(key, key_buf) == 0) {
-      printf(" ==== in the strcmp ==== \n ");
-      printf("the keyfnd is [%s]\t", key_buf);
-      printf("the key is [%s]\t \n", key);
+      // printf(" ==== in the strcmp ==== \n ");
+      // printf("the keyfnd is [%s]\t", key_buf);
+      // printf("the key is [%s]\t \n", key);
       free(key_buf);
       kvdb_unlock(db);
       return val_buf;
@@ -315,8 +313,7 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
     }
   }
 
-  // assert(key_buf == NULL);
-
+  // should not reach here
   return NULL;
 }
 
@@ -333,14 +330,16 @@ int kvdb_check(kvdb_t *db) {
 
   if (flag == LOG_BGN) {
     log_error("lose last record.\n");
-  }
-  if (flag == LOG_COMMIT) {
+  } else if (flag == LOG_COMMIT) {
     log_debug("begin recover the db.\n");
     if (kvdb_recover(db) != 0) {
       log_error("error in db recovery. \n");
       return -1;
     }
-  }
+  } else if(flag == LOG_FREE) {
+    // LOG_FREE: do nothing
+  }  
+
   return 0;
 }
 
@@ -353,7 +352,7 @@ int kvdb_recover(kvdb_t *db) {
   int flag, offset;
   int key_size, val_size;
   char *buf;
-  printf("in the recover process \n");
+  printf("in the recover process. \n");
   // get the last commit info
   lseek(log_fd, 0, SEEK_SET);
   read(log_fd, &flag, sizeof(flag));
