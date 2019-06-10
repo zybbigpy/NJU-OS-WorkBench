@@ -301,9 +301,12 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
     }
     key_buf[key_size] = '\0';
     val_buf[val_size] = '\0';
-    printf("the key is [%s]\t", key_buf);
-    printf("the val is [%s]\n", val_buf);
+    printf("the keyfnd is [%s]\t", key_buf);
+    printf("the valfnd is [%s]\n", val_buf);
     if (strcmp(key, key_buf) == 0) {
+      printf(" ==== in the strcmp ==== \n ");
+      printf("the keyfnd is [%s]\t", key_buf);
+      printf("the key is [%s]\t", key);
       free(key_buf);
       kvdb_unlock(db);
       return val_buf;
