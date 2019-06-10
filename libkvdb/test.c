@@ -13,7 +13,7 @@ int main() {
     char* value2 = kvdb_get(&db, "jyy");
 
     printf("key is %s, and the value is %s.\n", "good", value1);
-    printf("key is %s, and the value is %s.\n", "good", value2);
+    printf("key is %s, and the value is %s.\n", "jyy", value2);
 
     free(value1);
     free(value2);

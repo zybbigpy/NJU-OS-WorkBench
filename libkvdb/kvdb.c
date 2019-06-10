@@ -245,8 +245,8 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
   int file_fd = db->file_fd;
   size_t key_size = 0;
   size_t val_size = 0;
-  char *key_buf = NULL;
-  char *val_buf = NULL;
+  //char *key_buf = NULL;
+  // char *val_buf = NULL;
 
   if (lseek(file_fd, 0, SEEK_SET) == -1) {
     log_error("error in get_lseek.\n");
@@ -256,6 +256,8 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
 
   while (1) {
     ssize_t read_ret = read(file_fd, &key_size, sizeof(key_size));
+    printf("key size is [%ld] \n", key_size);
+
     if (read_ret == 0) {
       log_error("can not find the key in db. \n");
       kvdb_unlock(db);
@@ -273,11 +275,12 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
       kvdb_unlock(db);
       return NULL;
     }
+    printf("val size is [%ld] \n", val_size);
 
     // assert(key_buf == NULL);
     // assert(val_buf == NULL);
-    key_buf = (char *)malloc(key_size + 1);
-    val_buf = (char *)malloc(val_size + 1);
+    char *key_buf = (char *)malloc(key_size + 1);
+    char *val_buf = (char *)malloc(val_size + 1);
     assert(key_buf);
     assert(val_buf);
 
@@ -298,19 +301,20 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
     }
 
     if (strcmp(key, key_buf) == 0) {
+      printf("the key is [%s]\n", key);
       val_buf[val_size] = '\0';
-      break;
+      free(key_buf);
+      kvdb_unlock(db);
+      return val_buf;
     } else {
       free(val_buf);
       free(key_buf);
     }
   }
 
-  assert(key_buf != NULL);
-  free(key_buf);
   // assert(key_buf == NULL);
-  kvdb_unlock(db);
-  return val_buf;
+  
+  return NULL;
 }
 
 int kvdb_check(kvdb_t *db) {
