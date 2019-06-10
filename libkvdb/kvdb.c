@@ -6,6 +6,10 @@
 #include <string.h>
 #include <unistd.h>
 
+#define LOG_BGN 1
+#define LOG_COMMIT 2
+#define LOG_FREE 3
+
 int kvdb_open_thread_unsafe(kvdb_t *db, const char *filename);
 int kvdb_close_thread_unsafe(kvdb_t *db);
 int kvdb_put_thread_unsafe(kvdb_t *db, const char *key, const char *value);
@@ -136,11 +140,6 @@ int kvdb_close_thread_unsafe(kvdb_t *db) {
   }
   return 0;
 }
-
-#define LOG_EPT 0
-#define LOG_BGN 1
-#define LOG_COMMIT 2
-#define LOG_FREE 3
 
 int kvdb_set_log(int log_fd, int flag) {
   lseek(log_fd, 0, SEEK_SET);
