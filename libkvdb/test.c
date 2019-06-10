@@ -4,7 +4,7 @@
 
 int main() {
     kvdb_t db;
-    char* value;
+    char* value =NULL;
     kvdb_open(&db, "good.db");
     kvdb_put(&db, "good", "try");
     kvdb_get(&db, "good");
