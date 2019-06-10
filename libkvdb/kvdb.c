@@ -253,7 +253,7 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
     kvdb_unlock(db);
     return NULL;
   }
-
+  printf("before seek the key is [%s]\n", key);
   while (1) {
     ssize_t read_ret = read(file_fd, &key_size, sizeof(key_size));
     printf("key size is [%d] \n", (int)key_size);
@@ -306,7 +306,7 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
     if (strcmp(key, key_buf) == 0) {
       printf(" ==== in the strcmp ==== \n ");
       printf("the keyfnd is [%s]\t", key_buf);
-      printf("the key is [%s]\t", key);
+      printf("the key is [%s]\t \n", key);
       free(key_buf);
       kvdb_unlock(db);
       return val_buf;
