@@ -256,7 +256,7 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
 
   while (1) {
     ssize_t read_ret = read(file_fd, &key_size, sizeof(key_size));
-    printf("key size is [%ld] \n", key_size);
+    printf("key size is [%d] \n", (int)key_size);
 
     if (read_ret == 0) {
       log_error("can not find the key in db. \n");
@@ -275,7 +275,7 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
       kvdb_unlock(db);
       return NULL;
     }
-    printf("val size is [%ld] \n", val_size);
+    printf("val size is [%d] \n", (int)val_size);
 
     // assert(key_buf == NULL);
     // assert(val_buf == NULL);
