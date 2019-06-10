@@ -299,7 +299,7 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
       kvdb_unlock(db);
       return NULL;
     }
-    printf("the key is [%s]\t", key);
+    printf("the key is [%s]\t", key_buf);
     printf("the val is [%s]\n", val_buf);
     if (strcmp(key, key_buf) == 0) {
       
