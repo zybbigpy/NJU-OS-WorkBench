@@ -122,15 +122,15 @@ int kvdb_open_thread_unsafe(kvdb_t *db, const char *filename) {
 int kvdb_close_thread_unsafe(kvdb_t *db) {
   assert(db);
   assert(&(db->thread_lock));
-  if (!close(db->file_fd)) {
+  if (close(db->file_fd)!=0) {
     log_error("close db file error.\n");
     return -1;
   }
-  if (!close(db->log_fd)) {
+  if (close(db->log_fd)!=0) {
     log_error("close db log error.\n");
     return -1;
   }
-  if (!pthread_mutex_destroy(&(db->thread_lock))) {
+  if (pthread_mutex_destroy(&(db->thread_lock))!=0) {
     log_error("destroy db mutex error. \n");
     return -1;
   }
