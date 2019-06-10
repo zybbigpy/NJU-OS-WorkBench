@@ -351,7 +351,7 @@ int kvdb_recover(kvdb_t *db) {
   int flag, offset;
   int key_size, val_size;
   char *buf;
-
+  printf("in the recover process \n");
   // get the last commit info
   lseek(log_fd, 0, SEEK_SET);
   read(log_fd, &flag, sizeof(flag));
