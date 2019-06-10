@@ -100,18 +100,18 @@ int kvdb_open_thread_unsafe(kvdb_t *db, const char *filename) {
   db->file_fd = open(filename, O_CREAT | O_RDWR, 0644);
   db->log_fd = open(logname, O_CREAT | O_RDWR, 0644);
 
-  if (kvdb_lock(db)!=0) {
+  if (kvdb_lock(db) != 0) {
     log_error("lock db error.\n");
     return -1;
   }
 
-  if (kvdb_check(db)!=0) {
+  if (kvdb_check(db) != 0) {
     log_error("check db error\n");
     kvdb_unlock(db);
     return -1;
   }
 
-  if (kvdb_unlock(db)!=0) {
+  if (kvdb_unlock(db) != 0) {
     log_error("unlock db error.\n");
     return -1;
   }
@@ -122,15 +122,15 @@ int kvdb_open_thread_unsafe(kvdb_t *db, const char *filename) {
 int kvdb_close_thread_unsafe(kvdb_t *db) {
   assert(db);
   assert(&(db->thread_lock));
-  if (close(db->file_fd)!=0) {
+  if (close(db->file_fd) != 0) {
     log_error("close db file error.\n");
     return -1;
   }
-  if (close(db->log_fd)!=0) {
+  if (close(db->log_fd) != 0) {
     log_error("close db log error.\n");
     return -1;
   }
-  if (pthread_mutex_destroy(&(db->thread_lock))!=0) {
+  if (pthread_mutex_destroy(&(db->thread_lock)) != 0) {
     log_error("destroy db mutex error. \n");
     return -1;
   }
@@ -245,7 +245,7 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
   int file_fd = db->file_fd;
   size_t key_size = 0;
   size_t val_size = 0;
-  //char *key_buf = NULL;
+  // char *key_buf = NULL;
   // char *val_buf = NULL;
 
   if (lseek(file_fd, 0, SEEK_SET) == -1) {
@@ -279,7 +279,7 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
 
     // assert(key_buf == NULL);
     // assert(val_buf == NULL);
-    char *key_buf = (char *)malloc(key_size);
+    char *key_buf = (char *)malloc(key_size + 1);
     char *val_buf = (char *)malloc(val_size + 1);
     assert(key_buf);
     assert(val_buf);
@@ -299,12 +299,11 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
       kvdb_unlock(db);
       return NULL;
     }
-    key_buf[key_size]='\0';
+    key_buf[key_size] = '\0';
+    val_buf[val_size] = '\0';
     printf("the key is [%s]\t", key_buf);
     printf("the val is [%s]\n", val_buf);
     if (strcmp(key, key_buf) == 0) {
-      
-      val_buf[val_size] = '\0';
       free(key_buf);
       kvdb_unlock(db);
       return val_buf;
@@ -315,7 +314,7 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
   }
 
   // assert(key_buf == NULL);
-  
+
   return NULL;
 }
 
