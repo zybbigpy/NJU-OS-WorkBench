@@ -274,8 +274,8 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
       return NULL;
     }
 
-    assert(key_buf == NULL);
-    assert(val_buf == NULL);
+    // assert(key_buf == NULL);
+    // assert(val_buf == NULL);
     key_buf = (char *)malloc(key_size + 1);
     val_buf = (char *)malloc(val_size + 1);
     assert(key_buf);
@@ -308,7 +308,7 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
 
   assert(key_buf != NULL);
   free(key_buf);
-  assert(key_buf == NULL);
+  // assert(key_buf == NULL);
   kvdb_unlock(db);
   return val_buf;
 }
