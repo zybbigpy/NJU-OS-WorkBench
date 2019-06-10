@@ -279,7 +279,7 @@ char *kvdb_get_thread_unsafe(kvdb_t *db, const char *key) {
 
     // assert(key_buf == NULL);
     // assert(val_buf == NULL);
-    char *key_buf = (char *)malloc(key_size + 1);
+    char *key_buf = (char *)malloc(key_size);
     char *val_buf = (char *)malloc(val_size + 1);
     assert(key_buf);
     assert(val_buf);
