@@ -10,8 +10,8 @@ struct spinlock {
 
 typedef struct spinlock spinlock;
 
-int spinlock_init(spinlock *lk, char *name);
-int spinlock_lock(spinlock *lk);
-int spinlock_unlock(spinlock *lk);
+void spinlock_init(spinlock *lk, char *name);
+void spinlock_lock(spinlock *lk);
+void spinlock_unlock(spinlock *lk);
 
 #endif
