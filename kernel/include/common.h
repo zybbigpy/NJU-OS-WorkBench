@@ -4,6 +4,7 @@
 #include <nanos.h>
 
 // from x86-qemu.h
+// thread unsafe
 static inline void puts(const char *s) {
   for (; *s; s++) {
     _putc(*s);
