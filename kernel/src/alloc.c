@@ -23,16 +23,16 @@ static void pmm_init() {
   pm_end = (uintptr_t)_heap.end;
   // sbrkptr = (char *)((pm_start + sizeof(Header) - 1) & ~(sizeof(Header) -
   // 1));
-  sbrkptr = pm_start;
+  sbrkptr = (char *)pm_start;
 }
 
 #define NALLOC 1024
-static void *kmalloc_unsafe(size_t size);
-static void *kfree_unsafe(void *ptr);
+static void *kalloc_unsafe(size_t size);
+static void kfree_unsafe(void *ptr);
 static Header *more_units(size_t units);
 static char *ksbrk(size_t size);
 
-static void *kmalloc_unsafe(size_t size) {
+static void *kalloc_unsafe(size_t size) {
   Header *cur;
   Header *prev;
 
@@ -122,5 +122,8 @@ static char *ksbrk(size_t size) {
 
   sbrkptr += size;
 
-  return sbrkptr;
+  return old_sbrkptr;
 }
+
+static void *kalloc(size_t size) { return kalloc_unsafe(size); }
+static void kfree(void *ptr) { return kfree_unsafe(ptr); }
