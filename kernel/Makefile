@@ -4,6 +4,7 @@ INC_DIR        := include/ framework/
 export AM_HOME := $(PWD)/../abstract-machine
 ifeq ($(ARCH),)
 export ARCH := x86-qemu
+export TASK := L1
 endif
 
 PREBUILD := git
