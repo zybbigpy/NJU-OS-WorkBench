@@ -8,11 +8,14 @@ static inline void puts(const char *s) {
     _putc(*s);
   }
 }
-#define panic(s) \
-  do { \
-    puts("AM Panic: "); puts(s); \
+#define STRINGIFY(s) #s
+#define TOSTRING(s) STRINGIFY(s)
+#define panic(s)                                        \
+  do {                                                  \
+    puts("AM Panic: ");                                 \
+    puts(s);                                            \
     puts(" @ " __FILE__ ":" TOSTRING(__LINE__) "  \n"); \
-    _halt(1); \
-  } while(0)
+    _halt(1);                                           \
+  } while (0)
 
 #endif
