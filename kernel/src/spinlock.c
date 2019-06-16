@@ -50,7 +50,7 @@ void pushcli() {
   // close interupt
   _intr_write(0);
 
-  if (intr_number = 0) {
+  if (intr_number == 0) {
     intr_status_save = intr_status_now;
   }
 
