@@ -26,7 +26,7 @@ static void pmm_init() {
   // sbrkptr = (char *)((pm_start + sizeof(Header) - 1) & ~(sizeof(Header) -
   // 1));
   sbrkptr = (char *)pm_start;
-  spinlock_init(&allloc_lock, "alloc_lock");
+  spinlock_init(&alloc_lock, "alloc_lock");
 }
 
 #define NALLOC 1024
