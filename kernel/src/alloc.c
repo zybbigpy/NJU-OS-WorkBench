@@ -1,6 +1,7 @@
 #include <alloc.h>
 #include <common.h>
 #include <klib.h>
+#include <spinlock.h>
 
 static uintptr_t pm_start, pm_end;
 
@@ -11,6 +12,7 @@ static char *sbrkptr = NULL;
 
 static Header base;
 static Header *freep = NULL;  // linked list for free blocks
+static alloc_lock;
 
 MODULE_DEF(pmm){
     .init = pmm_init,
@@ -24,6 +26,7 @@ static void pmm_init() {
   // sbrkptr = (char *)((pm_start + sizeof(Header) - 1) & ~(sizeof(Header) -
   // 1));
   sbrkptr = (char *)pm_start;
+  spinlock_init(&allloc_lock, "alloc_lock");
 }
 
 #define NALLOC 1024
@@ -125,5 +128,15 @@ static char *ksbrk(size_t size) {
   return old_sbrkptr;
 }
 
-static void *kalloc(size_t size) { return kalloc_unsafe(size); }
-static void kfree(void *ptr) { return kfree_unsafe(ptr); }
+static void *kalloc(size_t size) {
+  spinlock_lock(&alloc_lock);
+  void *ret = kalloc_unsafe(size);
+  spinlock_unlock(&alloc_lock);
+  return ret;
+}
+
+static void kfree(void *ptr) {
+  spinlock_lock(&alloc_lock);
+  kfree_unsafe(ptr);
+  spinlock_unlock(&alloc_lock);
+}
