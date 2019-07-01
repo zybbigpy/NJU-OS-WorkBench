@@ -12,7 +12,7 @@ static char *sbrkptr = NULL;
 
 static Header base;
 static Header *freep = NULL;  // linked list for free blocks
-static alloc_lock;
+static spinlock alloc_lock;
 
 MODULE_DEF(pmm){
     .init = pmm_init,
